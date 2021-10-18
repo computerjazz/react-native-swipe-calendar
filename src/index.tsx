@@ -244,6 +244,7 @@ type CalendarProps = {
   }) => JSX.Element | null;
   TitleComponent?: (props: { date: Date }) => JSX.Element | null;
   theme?: Partial<typeof DEFAULT_THEME>;
+  monthBuffer?: number;
 };
 
 function Calendar(
@@ -255,6 +256,7 @@ function Calendar(
     DayComponent,
     TitleComponent,
     theme = {},
+    monthBuffer = 2,
   }: CalendarProps,
   ref: React.ForwardedRef<CalendarImperativeApi>
 ) {
@@ -311,6 +313,7 @@ function Calendar(
       <InfinitePager
         ref={pagerRef}
         PageComponent={MonthPage}
+        pageBuffer={monthBuffer}
         onPageChange={(pg) => {
           const currentMonth = addMonths(initialDate, pg);
           currentMonth.setDate(1);
