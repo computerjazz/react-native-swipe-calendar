@@ -23,7 +23,9 @@ import {
   differenceInCalendarMonths,
 } from "date-fns";
 import { isEqual } from "lodash";
-import InfinitePager, { InfinitePagerImperativeApi } from "./InfinitePager";
+import InfinitePager, {
+  InfinitePagerImperativeApi,
+} from "react-native-infinite-pager";
 
 const DEFAULT_THEME = {
   textActiveColor: "black",
