@@ -1,6 +1,6 @@
 {
   "name": "react-native-swipe-calendar",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "An infinitely-paged calendar component that dynamically renders months. Powered by Reanimated 2.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "typecheck": "tsc --skipLibCheck --noEmit",
-    "build": "bob build"
+    "build": "bob build",
+    "publish-patch": "yarn build && yarn version --patch && npm publish"
   },
   "husky": {
     "hooks": {
