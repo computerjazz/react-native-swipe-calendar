@@ -23,9 +23,7 @@ import {
   differenceInCalendarMonths,
 } from "date-fns";
 import { isEqual } from "lodash";
-import InfinitePager, {
-  InfinitePagerImperativeApi,
-} from "react-native-infinite-pager";
+import InfinitePager, { InfinitePagerImperativeApi } from "./InfinitePager";
 
 const DEFAULT_THEME = {
   textActiveColor: "black",
@@ -306,7 +304,7 @@ function Calendar(
     DayComponent,
     TitleComponent,
     theme = {},
-    monthBuffer = 2,
+    monthBuffer = 1,
   }: CalendarProps,
   ref: React.ForwardedRef<CalendarImperativeApi>
 ) {
