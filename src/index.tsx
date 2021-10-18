@@ -38,7 +38,9 @@ const DEFAULT_THEME = {
   inactiveOpacity: 0,
 };
 
-type OnDateSelect = undefined | ((date: Date) => void);
+type OnDateSelect =
+  | undefined
+  | ((date: Date, options: { isSelected: boolean }) => void);
 type DayComponentType = (props: {
   date: Date;
   isInActiveMonth: boolean;
@@ -54,44 +56,6 @@ const CalendarContext = React.createContext({
   TitleComponent: undefined as TitleComponentType | undefined,
   theme: DEFAULT_THEME,
 });
-
-export function CalendarProvider({
-  children,
-  initialDate = new Date(),
-  selectedDate,
-  onDateSelect,
-  DayComponent,
-  TitleComponent,
-  theme,
-}: {
-  children: React.ReactNode;
-  initialDate?: Date;
-  selectedDate?: Date | null;
-  onDateSelect?: OnDateSelect;
-  DayComponent?: (props: {
-    date: Date;
-    isInActiveMonth: boolean;
-    isSelected: boolean;
-    isToday: boolean;
-  }) => JSX.Element | null;
-  TitleComponent?: (props: { date: Date }) => JSX.Element | null;
-  theme: typeof DEFAULT_THEME;
-}) {
-  return (
-    <CalendarContext.Provider
-      value={{
-        referenceDate: initialDate,
-        selectedDate,
-        onDateSelect,
-        DayComponent,
-        TitleComponent,
-        theme,
-      }}
-    >
-      {children}
-    </CalendarContext.Provider>
-  );
-}
 
 export function useCalendarContext() {
   return useContext(CalendarContext);
@@ -198,7 +162,7 @@ function DayItem({ date, sameMonth }: { date: Date; sameMonth: boolean }) {
 
   return (
     <TouchableOpacity
-      onPress={() => onDateSelect?.(date)}
+      onPress={() => onDateSelect?.(date, { isSelected })}
       style={{
         flex: 1,
         justifyContent: "center",
@@ -263,6 +227,7 @@ function Calendar(
   const initialDate = useMemo(() => currentDate || new Date(), []);
   const pagerRef = useRef<InfinitePagerImperativeApi>(null);
   const currentDateRef = useRef(currentDate);
+  const currentPageRef = useRef(0);
 
   const fullTheme = {
     ...DEFAULT_THEME,
@@ -289,6 +254,7 @@ function Calendar(
       !isSameMonth(currentDate, currentDateRef.current)
     ) {
       const page = differenceInCalendarMonths(currentDate, initialDate);
+      if (page === currentPageRef.current) return;
       pagerRef.current?.setPage(page, { animated: false });
     }
 
@@ -296,18 +262,14 @@ function Calendar(
   }, [currentDate, initialDate]);
 
   return (
-    <CalendarProvider
-      initialDate={initialDate}
-      selectedDate={selectedDate}
-      DayComponent={DayComponent}
-      TitleComponent={TitleComponent}
-      theme={fullTheme}
-      onDateSelect={(date) => {
-        onDateSelect?.(date);
-        if (date) {
-          const diff = differenceInCalendarMonths(date, initialDate);
-          pagerRef.current?.setPage(diff, { animated: true });
-        }
+    <CalendarContext.Provider
+      value={{
+        referenceDate: initialDate,
+        selectedDate,
+        onDateSelect,
+        DayComponent,
+        TitleComponent,
+        theme: fullTheme,
       }}
     >
       <InfinitePager
@@ -315,12 +277,13 @@ function Calendar(
         PageComponent={MonthPage}
         pageBuffer={monthBuffer}
         onPageChange={(pg) => {
+          currentPageRef.current = pg;
           const currentMonth = addMonths(initialDate, pg);
           currentMonth.setDate(1);
           onMonthChange?.(currentMonth);
         }}
       />
-    </CalendarProvider>
+    </CalendarContext.Provider>
   );
 }
 
