@@ -1303,6 +1303,11 @@
     "@types/istanbul-lib-coverage" "*"
     "@types/istanbul-lib-report" "*"
 
+"@types/lodash@^4.14.175":
+  version "4.14.175"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.175.tgz#b78dfa959192b01fae0ad90e166478769b215f45"
+  integrity sha512-XmdEOrKQ8a1Y/yxQFOMbC47G/V2VDO1GvMRnl4O75M4GW/abC5tnfzadQYkqEveqRM1dEJGFFegfPNA2vvx2iw==
+
 "@types/minimatch@^3.0.3":
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.5.tgz#1001cc5e6a3704b83c236027e77f2f58ea010f40"
@@ -3492,7 +3497,7 @@ lodash.throttle@^4.1.1:
   resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
   integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
 
-lodash@^4.17.14, lodash@^4.17.15, lodash@^4.3.0:
+lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.21, lodash@^4.3.0:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -4600,10 +4605,10 @@ react-native-gesture-handler@^1.10.3:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
-react-native-infinite-pager@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-infinite-pager/-/react-native-infinite-pager-0.0.1.tgz#69c2b14ad53d8f5deb14f773b6742c577a7deea9"
-  integrity sha512-tk7Tog7UuWkMEQqBAXFN9gY/CqgVWpcxNKhj6SfM5Z5GJH1dFPFMV4yOJpAnSOa9k/IvTY7nNpRzn02w3qZ2AQ==
+react-native-infinite-pager@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-infinite-pager/-/react-native-infinite-pager-0.0.2.tgz#1da8a565895df4ea53ac493d04ded016e674d50b"
+  integrity sha512-4TbrFRLQ314LfnKZAAzReDysP8t9qIxT6dLPi0oH6IUZHEtBOTtSeiTNtu6TRDiz5dQ8XA3zzCSYP6ufrBRmyQ==
 
 react-native-reanimated@^2.2.0:
   version "2.2.3"
