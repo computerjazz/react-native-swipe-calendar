@@ -54,7 +54,7 @@ const DEFAULT_THEME = {
 | `onMonthChange`  | `(date: Date) => void`          | Callback invoked when the month is changed.   |
 | `currentDate`    | `Date`                          | Date to initialize the calendar with.         |
 | `theme`          | `Partial<typeof DEFAULT_THEME>` | Overrides for default fonts and colors.       |
-| `DayComponent`   | `DayComponentType`              | Custom replacement for Day compoennt.         |
+| `DayComponent`   | `DayComponentType`              | Custom replacement for Day compoent.          |
 | `TitleComponent` | `TitleComponentType`            | Custom replacement for Header component.      |
 
 ### Imperative Api
