@@ -47,14 +47,14 @@ const DEFAULT_THEME = {
 };
 ```
 
-| Name             | Type                            | Description                                   |
-| :--------------- | :------------------------------ | :-------------------------------------------- | ----------------------------------------- |
+| Name             | Type                            |Description    |
+| :--------------- | :------------------------------ | :------- |
 | `selectedDate`   | `Date                           | null`                                         | Calendar date to be marked as "selected". |
 | `onDateSelect`   | `(date: Date) => void`          | Callback invoked when the a date is selected. |
 | `onMonthChange`  | `(date: Date) => void`          | Callback invoked when the month is changed.   |
 | `currentDate`    | `Date`                          | Date to initialize the calendar with.         |
 | `theme`          | `Partial<typeof DEFAULT_THEME>` | Overrides for default fonts and colors.       |
-| `DayComponent`   | `DayComponentType`              | Custom replacement for Day compoent.          |
+| `DayComponent`   | `DayComponentType`              | Custom replacement for Day compoent.         |
 | `TitleComponent` | `TitleComponentType`            | Custom replacement for Header component.      |
 
 ### Imperative Api
