@@ -25,6 +25,7 @@ import {
 import { isEqual } from "lodash";
 import InfinitePager, {
   InfinitePagerImperativeApi,
+  PageInterpolatorParams,
 } from "react-native-infinite-pager";
 
 const DEFAULT_THEME = {
@@ -64,120 +65,125 @@ const CalendarContext = React.createContext({
   DayComponent: undefined as DayComponentType | undefined,
   TitleComponent: undefined as TitleComponentType | undefined,
   theme: DEFAULT_THEME,
+  pageInterpolator: defaultPageInterpolator,
 });
 
 export function useCalendarContext() {
   return useContext(CalendarContext);
 }
 
-export const MonthPage = React.memo(
-  ({
-    index,
-    focusAnim,
-  }: {
-    index: number;
-    focusAnim: Animated.DerivedValue<number>;
-  }) => {
-    const { referenceDate, TitleComponent, theme } = useCalendarContext();
-    const firstDayOfMonth = useMemo(
-      () => addMonths(referenceDate, index),
-      [referenceDate, index]
-    );
-    firstDayOfMonth.setDate(1);
-    const lastDayOfMo = useMemo(
-      () => lastDayOfMonth(firstDayOfMonth),
-      [firstDayOfMonth]
-    );
-    const title = format(firstDayOfMonth, theme.headerDateFormat);
-    const weekStarts = useMemo(
-      () =>
-        eachWeekOfInterval({
-          start: firstDayOfMonth,
-          end: lastDayOfMo,
-        }),
-      [firstDayOfMonth, lastDayOfMo]
-    );
+export type CalendarPageInterpolatorParams = PageInterpolatorParams & {
+  theme: typeof DEFAULT_THEME;
+};
 
-    const weeks = useMemo(
-      () =>
-        weekStarts.map((week) => {
-          return eachDayOfInterval({ start: week, end: addDays(week, 6) });
-        }),
-      [weekStarts]
-    );
+function defaultPageInterpolator({
+  focusAnim,
+  theme,
+  pageWidth,
+}: CalendarPageInterpolatorParams): ReturnType<typeof useAnimatedStyle> {
+  "worklet";
+  return {
+    transform: [
+      {
+        translateX: interpolate(
+          focusAnim.value,
+          [-1, 0, 1],
+          [-pageWidth.value, 0, pageWidth.value]
+        ),
+      },
+    ],
+    opacity: interpolate(
+      focusAnim.value,
+      [-1, 0, 1],
+      [theme.inactiveOpacity, 1, theme.inactiveOpacity]
+    ),
+  };
+}
 
-    const animStyle = useAnimatedStyle(() => {
-      const opacity =
-        theme.inactiveOpacity === 1
-          ? 1
-          : interpolate(
-              focusAnim.value,
-              [-1, 0, 1],
-              [theme.inactiveOpacity, 1, theme.inactiveOpacity],
-              Animated.Extrapolate.CLAMP
+export const MonthPage = React.memo(({ index }: { index: number }) => {
+  const { referenceDate, TitleComponent, theme } = useCalendarContext();
+  const firstDayOfMonth = useMemo(
+    () => addMonths(referenceDate, index),
+    [referenceDate, index]
+  );
+  firstDayOfMonth.setDate(1);
+  const lastDayOfMo = useMemo(
+    () => lastDayOfMonth(firstDayOfMonth),
+    [firstDayOfMonth]
+  );
+  const title = format(firstDayOfMonth, theme.headerDateFormat);
+  const weekStarts = useMemo(
+    () =>
+      eachWeekOfInterval({
+        start: firstDayOfMonth,
+        end: lastDayOfMo,
+      }),
+    [firstDayOfMonth, lastDayOfMo]
+  );
+
+  const weeks = useMemo(
+    () =>
+      weekStarts.map((week) => {
+        return eachDayOfInterval({ start: week, end: addDays(week, 6) });
+      }),
+    [weekStarts]
+  );
+
+  const thisMonth = useMemo(
+    () => format(firstDayOfMonth, "MM"),
+    [firstDayOfMonth]
+  );
+  return (
+    <Animated.View style={{ alignItems: "center" }}>
+      {TitleComponent ? (
+        <TitleComponent date={firstDayOfMonth} />
+      ) : (
+        <Text
+          style={{
+            fontSize: theme.headerFontSize,
+            color: theme.textActiveColor,
+          }}
+        >
+          {title}
+        </Text>
+      )}
+      <View style={styles.row}>
+        <View style={styles.dayLabelRow}>
+          {weeks[0].map((day) => {
+            const dayLabel = format(day, theme.dayLabelFormat);
+            return (
+              <View style={styles.dayLabelContainer}>
+                <Text style={{ color: theme.textActiveColor }}>{dayLabel}</Text>
+              </View>
             );
-      return {
-        opacity,
-      };
-    }, [focusAnim]);
-    const thisMonth = useMemo(
-      () => format(firstDayOfMonth, "MM"),
-      [firstDayOfMonth]
-    );
-    return (
-      <Animated.View style={[animStyle, { alignItems: "center" }]}>
-        {TitleComponent ? (
-          <TitleComponent date={firstDayOfMonth} />
-        ) : (
-          <Text
-            style={{
-              fontSize: theme.headerFontSize,
-              color: theme.textActiveColor,
-            }}
-          >
-            {title}
-          </Text>
-        )}
-        <View style={styles.row}>
-          <View style={styles.dayLabelRow}>
-            {weeks[0].map((day) => {
-              const dayLabel = format(day, theme.dayLabelFormat);
-              return (
-                <View style={styles.dayLabelContainer}>
-                  <Text style={{ color: theme.textActiveColor }}>
-                    {dayLabel}
-                  </Text>
-                </View>
-              );
-            })}
-          </View>
+          })}
         </View>
-        <Animated.View style={styles.row}>
-          <Animated.View style={{ flex: 1 }}>
-            {weeks.map((daysInWeek) => {
-              return (
-                <Animated.View style={styles.weekContainer}>
-                  {daysInWeek.map((day) => {
-                    const sameMonth = isSameMonth(day, firstDayOfMonth);
-                    const dayMonth = format(day, "MM-dd");
-                    const key = `day-${dayMonth}-thisMonth:${thisMonth}`;
-                    return (
-                      <DayWrapper
-                        key={key}
-                        isInDisplayedMonth={sameMonth}
-                        date={day}
-                      />
-                    );
-                  })}
-                </Animated.View>
-              );
-            })}
-          </Animated.View>
+      </View>
+      <Animated.View style={styles.row}>
+        <Animated.View style={{ flex: 1 }}>
+          {weeks.map((daysInWeek) => {
+            return (
+              <Animated.View style={styles.weekContainer}>
+                {daysInWeek.map((day) => {
+                  const sameMonth = isSameMonth(day, firstDayOfMonth);
+                  const dayMonth = format(day, "MM-dd");
+                  const key = `day-${dayMonth}-thisMonth:${thisMonth}`;
+                  return (
+                    <DayWrapper
+                      key={key}
+                      isInDisplayedMonth={sameMonth}
+                      date={day}
+                    />
+                  );
+                })}
+              </Animated.View>
+            );
+          })}
         </Animated.View>
       </Animated.View>
-    );
-  }
-);
+    </Animated.View>
+  );
+});
 
 type DayWrapperProps = {
   isInDisplayedMonth: boolean;
@@ -304,6 +310,7 @@ type CalendarProps = {
   monthBuffer?: number;
   minDate?: Date;
   maxDate?: Date;
+  pageInterpolator?: typeof defaultPageInterpolator;
 };
 
 function Calendar(
@@ -318,6 +325,7 @@ function Calendar(
     monthBuffer = 1,
     minDate,
     maxDate,
+    pageInterpolator = defaultPageInterpolator,
   }: CalendarProps,
   ref: React.ForwardedRef<CalendarImperativeApi>
 ) {
@@ -408,8 +416,24 @@ function Calendar(
       DayComponent,
       TitleComponent,
       theme: fullTheme,
+      pageInterpolator,
     }),
-    [selectedDate, onDateSelect, DayComponent, TitleComponent, fullTheme]
+    [
+      selectedDate,
+      onDateSelect,
+      DayComponent,
+      TitleComponent,
+      fullTheme,
+      pageInterpolator,
+    ]
+  );
+
+  const pageInterpolatorInternal = useCallback(
+    (params: PageInterpolatorParams) => {
+      "worklet";
+      return pageInterpolator(Object.assign(params, { theme: fullTheme }));
+    },
+    [fullTheme, pageInterpolator]
   );
 
   return (
@@ -421,6 +445,7 @@ function Calendar(
         onPageChange={onPageChange}
         minIndex={minPageIndex}
         maxIndex={maxPageIndex}
+        pageInterpolator={pageInterpolatorInternal}
       />
     </CalendarContext.Provider>
   );
