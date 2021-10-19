@@ -1,6 +1,6 @@
 {
   "name": "react-native-swipe-calendar",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "An infinitely-paged calendar component that dynamically renders months. Powered by Reanimated 2.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
