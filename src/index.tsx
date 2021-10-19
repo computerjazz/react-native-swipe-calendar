@@ -75,6 +75,9 @@ export type DayComponentType = (props: {
 }) => JSX.Element | null;
 
 export type HeaderComponentType = (props: { date: Date }) => JSX.Element | null;
+export type DayLabelComponentType = (props: {
+  date: Date;
+}) => JSX.Element | null;
 
 type ImperativeApiOptions = {
   animated?: boolean;
@@ -85,6 +88,7 @@ const CalendarContext = React.createContext({
   selectedDate: null as Date | null | undefined,
   onDateSelect: (() => {}) as OnDateSelect,
   DayComponent: undefined as DayComponentType | undefined,
+  DayLabelComponent: undefined as DayLabelComponentType | undefined,
   HeaderComponent: undefined as HeaderComponentType | undefined,
   theme: DEFAULT_THEME,
   pageInterpolator: defaultPageInterpolator,
@@ -123,7 +127,8 @@ function defaultPageInterpolator({
 }
 
 export const MonthPage = React.memo(({ index }: { index: number }) => {
-  const { referenceDate, HeaderComponent, theme } = useCalendarContext();
+  const { referenceDate, HeaderComponent, DayLabelComponent, theme } =
+    useCalendarContext();
   const firstDayOfMonth = useMemo(
     () => addMonths(referenceDate, index),
     [referenceDate, index]
@@ -174,7 +179,10 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
         <View style={styles.dayLabelRow}>
           {weeks[0].map((day) => {
             const dayLabelText = format(day, theme.dayLabelDateFormat);
-            return (
+
+            return DayLabelComponent ? (
+              <DayLabelComponent date={day} />
+            ) : (
               <View
                 key={`day-label-${day.toISOString()}`}
                 style={styles.dayLabelContainer}
@@ -352,8 +360,9 @@ type CalendarProps = {
   onDateSelect?: OnDateSelect;
   onMonthChange?: (date: Date) => void;
   currentDate?: Date;
+  HeaderComponent?: HeaderComponentType;
+  DayLabelComponent?: DayLabelComponentType;
   DayComponent?: DayComponentType;
-  HeaderComponent?: (props: { date: Date }) => JSX.Element | null;
   theme?: Partial<typeof DEFAULT_THEME>;
   monthBuffer?: number;
   minDate?: Date;
@@ -367,8 +376,9 @@ function Calendar(
     onDateSelect,
     onMonthChange,
     currentDate,
-    DayComponent,
     HeaderComponent,
+    DayLabelComponent,
+    DayComponent,
     theme = {},
     monthBuffer = 1,
     minDate,
@@ -461,16 +471,18 @@ function Calendar(
       referenceDate: initialDateRef.current,
       selectedDate,
       onDateSelect,
-      DayComponent,
       HeaderComponent,
+      DayLabelComponent,
+      DayComponent,
       theme: fullTheme,
       pageInterpolator,
     }),
     [
       selectedDate,
       onDateSelect,
-      DayComponent,
       HeaderComponent,
+      DayLabelComponent,
+      DayComponent,
       fullTheme,
       pageInterpolator,
     ]
