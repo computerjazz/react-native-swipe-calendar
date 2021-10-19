@@ -3,7 +3,7 @@
 A swipeable calendar component for React Native.<br />
 Fully native interactions powered by [Reanimated 2](https://github.com/kmagiera/react-native-reanimated) and [React Native Gesture Handler](https://github.com/kmagiera/react-native-gesture-handler)
 
-![SwipeCalendar demo](https://i.imgur.com/ffYnomL.gif)
+![SwipeCalendar demo](https://i.imgur.com/JHW0Kup.gif)
 
 ## Install
 
