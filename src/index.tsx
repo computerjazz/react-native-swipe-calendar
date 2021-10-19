@@ -388,6 +388,7 @@ type CalendarProps = {
   minDate?: Date;
   maxDate?: Date;
   pageInterpolator?: typeof defaultPageInterpolator;
+  simultaneousHandlers?: React.Ref<unknown> | React.Ref<unknown>[];
 };
 
 function Calendar(
@@ -404,6 +405,7 @@ function Calendar(
     minDate,
     maxDate,
     pageInterpolator = defaultPageInterpolator,
+    simultaneousHandlers,
   }: CalendarProps,
   ref: React.ForwardedRef<CalendarImperativeApi>
 ) {
@@ -526,6 +528,7 @@ function Calendar(
         minIndex={minPageIndex}
         maxIndex={maxPageIndex}
         pageInterpolator={pageInterpolatorInternal}
+        simultaneousHandlers={simultaneousHandlers}
       />
     </CalendarContext.Provider>
   );
