@@ -57,6 +57,23 @@ const DEFAULT_THEME = {
 | `DayComponent`   | `DayComponentType`              | Custom replacement for Day compoent.         |
 | `TitleComponent` | `TitleComponentType`            | Custom replacement for Header component.      |
 
+
+### Hooks
+
+If you render your own components via `DayComponent`, you may need access to more internal state than is available on props. This state may be accessed via the exported `useCalendarContext()` hook:
+
+```typescript
+type CalendarContextValue = {
+  referenceDate: Date,
+  selectedDate: Date | null | undefined,
+  onDateSelect: (() => {}) as OnDateSelect,
+  DayComponent: DayComponentType | undefined,
+  TitleComponent: TitleComponentType | undefined,
+  theme: typeof DEFAULT_THEME,
+});
+```
+
+
 ### Imperative Api
 
 ```typescript
