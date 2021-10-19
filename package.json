@@ -56,6 +56,6 @@
   "dependencies": {
     "date-fns": "^2.25.0",
     "lodash": "^4.17.21",
-    "react-native-infinite-pager": "^0.0.4"
+    "react-native-infinite-pager": "0.0.6"
   }
 }

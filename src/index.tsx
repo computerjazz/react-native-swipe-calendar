@@ -105,8 +105,8 @@ export const MonthPage = React.memo(
           ? 1
           : interpolate(
               focusAnim.value,
-              [0, 1],
-              [theme.inactiveOpacity, 1],
+              [-1, 0, 1],
+              [theme.inactiveOpacity, 1, theme.inactiveOpacity],
               Animated.Extrapolate.CLAMP
             );
       return {
