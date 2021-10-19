@@ -152,7 +152,10 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
           {weeks[0].map((day) => {
             const dayLabel = format(day, theme.dayLabelFormat);
             return (
-              <View style={styles.dayLabelContainer}>
+              <View
+                key={`day-label-${day.toISOString()}`}
+                style={styles.dayLabelContainer}
+              >
                 <Text style={{ color: theme.textActiveColor }}>{dayLabel}</Text>
               </View>
             );
@@ -163,7 +166,10 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
         <Animated.View style={{ flex: 1 }}>
           {weeks.map((daysInWeek) => {
             return (
-              <Animated.View style={styles.weekContainer}>
+              <Animated.View
+                key={`week-${daysInWeek[0]?.toISOString()}`}
+                style={styles.weekContainer}
+              >
                 {daysInWeek.map((day) => {
                   const sameMonth = isSameMonth(day, firstDayOfMonth);
                   const dayMonth = format(day, "MM-dd");
