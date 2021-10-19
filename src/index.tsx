@@ -43,13 +43,20 @@ const DEFAULT_THEME = {
 type OnDateSelect =
   | undefined
   | ((date: Date, options: { isSelected: boolean }) => void);
-type DayComponentType = (props: {
+
+export type DayComponentType = (props: {
   date: Date;
   isInDisplayedMonth: boolean;
   isSelected: boolean;
   isToday: boolean;
 }) => JSX.Element | null;
-type TitleComponentType = (props: { date: Date }) => JSX.Element | null;
+
+export type TitleComponentType = (props: { date: Date }) => JSX.Element | null;
+
+type ImperativeApiOptions = {
+  animated?: boolean;
+};
+
 const CalendarContext = React.createContext({
   referenceDate: new Date(),
   selectedDate: null as Date | null | undefined,
@@ -310,7 +317,7 @@ function Calendar(
   }: CalendarProps,
   ref: React.ForwardedRef<CalendarImperativeApi>
 ) {
-  const initialDate = useMemo(() => currentDate || new Date(), []);
+  const initialDateRef = useRef(currentDate || new Date());
   const pagerRef = useRef<InfinitePagerImperativeApi>(null);
   const currentDateRef = useRef(currentDate);
   const currentPageRef = useRef(0);
@@ -338,15 +345,18 @@ function Calendar(
   useImperativeHandle(
     ref,
     () => ({
-      incrementMonth: () => {
-        pagerRef.current?.incrementPage({ animated: true });
+      incrementMonth: (options?: ImperativeApiOptions) => {
+        const animated = options?.animated ?? true;
+        pagerRef.current?.incrementPage({ animated });
       },
-      decrementMonth: () => {
-        pagerRef.current?.decrementPage({ animated: true });
+      decrementMonth: (options?: ImperativeApiOptions) => {
+        const animated = options?.animated ?? true;
+        pagerRef.current?.decrementPage({ animated });
       },
-      setMonth: (date: Date) => {
-        const page = differenceInCalendarMonths(date, initialDate);
-        pagerRef.current?.setPage(page, { animated: false });
+      setMonth: (date: Date, options?: ImperativeApiOptions) => {
+        const animated = options?.animated ?? false;
+        const page = differenceInCalendarMonths(date, initialDateRef.current);
+        pagerRef.current?.setPage(page, { animated });
       },
     }),
     []
@@ -358,41 +368,34 @@ function Calendar(
       currentDateRef.current &&
       !isSameMonth(currentDate, currentDateRef.current)
     ) {
-      const page = differenceInCalendarMonths(currentDate, initialDate);
+      const page = differenceInCalendarMonths(
+        currentDate,
+        initialDateRef.current
+      );
       if (page === currentPageRef.current) return;
       pagerRef.current?.setPage(page, { animated: false });
     }
 
     currentDateRef.current = currentDate;
-  }, [currentDate, initialDate]);
+  }, [currentDate]);
 
-  const onPageChange = useCallback(
-    (pg: number) => {
-      currentPageRef.current = pg;
-      const currentMonth = addMonths(initialDate, pg);
-      currentMonth.setDate(1);
-      onMonthChangeRef.current?.(currentMonth);
-    },
-    [initialDate]
-  );
+  const onPageChange = useCallback((pg: number) => {
+    currentPageRef.current = pg;
+    const currentMonth = addMonths(initialDateRef.current, pg);
+    currentMonth.setDate(1);
+    onMonthChangeRef.current?.(currentMonth);
+  }, []);
 
   const providerValue = useMemo(
     () => ({
-      referenceDate: initialDate,
+      referenceDate: initialDateRef.current,
       selectedDate,
       onDateSelect,
       DayComponent,
       TitleComponent,
       theme: fullTheme,
     }),
-    [
-      initialDate,
-      selectedDate,
-      onDateSelect,
-      DayComponent,
-      TitleComponent,
-      fullTheme,
-    ]
+    [selectedDate, onDateSelect, DayComponent, TitleComponent, fullTheme]
   );
 
   return (
