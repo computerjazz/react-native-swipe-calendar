@@ -160,10 +160,6 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
     [weekStarts]
   );
 
-  const thisMonth = useMemo(
-    () => format(firstDayOfMonth, "MM"),
-    [firstDayOfMonth]
-  );
   return (
     <Animated.View style={{ alignItems: "center" }}>
       {HeaderComponent ? (
@@ -217,13 +213,13 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
               >
                 {daysInWeek.map((day) => {
                   const sameMonth = isSameMonth(day, firstDayOfMonth);
-                  const dayMonth = format(day, "MM-dd");
-                  const key = `day-${dayMonth}-thisMonth:${thisMonth}`;
+                  const dayDateFormatted = format(day, "yyyy-MM-dd");
                   return (
                     <DayWrapper
-                      key={key}
+                      key={dayDateFormatted}
                       isInDisplayedMonth={sameMonth}
                       date={day}
+                      dateFormatted={dayDateFormatted}
                     />
                   );
                 })}
@@ -239,10 +235,11 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
 type DayWrapperProps = {
   isInDisplayedMonth: boolean;
   date: Date;
+  dateFormatted: string;
 };
 
 const DayWrapper = React.memo(
-  ({ date, isInDisplayedMonth }: DayWrapperProps) => {
+  ({ date, isInDisplayedMonth, dateFormatted }: DayWrapperProps) => {
     const dateRef = useRef(date);
     const memoDate = useMemo(() => {
       if (isSameDay(dateRef.current, date)) {
@@ -268,6 +265,7 @@ const DayWrapper = React.memo(
     return (
       <DayItem
         date={memoDate}
+        dateFormatted={dateFormatted}
         isSelected={isSelected}
         isToday={isToday}
         isInDisplayedMonth={isInDisplayedMonth}
@@ -287,6 +285,7 @@ type DayProps = {
   DayComponent?: DayComponentType;
   onDateSelect?: OnDateSelect;
   theme: typeof DEFAULT_THEME;
+  dateFormatted: string;
 };
 
 const DayItem = React.memo(
@@ -298,6 +297,7 @@ const DayItem = React.memo(
     isToday,
     onDateSelect,
     theme,
+    dateFormatted,
   }: DayProps) => {
     const dayText = format(date, "d");
     const deselectedColor = isInDisplayedMonth
@@ -321,6 +321,7 @@ const DayItem = React.memo(
 
     return (
       <TouchableOpacity
+        testID={`react-native-swipe-calendar:${dateFormatted}`}
         onPress={() => onDateSelect?.(date, { isSelected })}
         style={{
           flex: 1,
