@@ -39,6 +39,8 @@ const DEFAULT_FONT_FAMILY =
 const DEFAULT_FONT_COLOR_ACTIVE = "black";
 const DEFAULT_FONT_COLOR_INACTIVE = "gray";
 
+type TextTransform = "uppercase" | "lowercase" | "capitalize" | "none";
+
 const DEFAULT_THEME = {
   todayIndicatorDotColor: "tomato",
   selectedDayBackgroundColor: "rgba(0, 0, 255, 0.25)",
@@ -47,11 +49,13 @@ const DEFAULT_THEME = {
   headerFontFamily: DEFAULT_FONT_FAMILY,
   headerFontColor: DEFAULT_FONT_COLOR_ACTIVE,
   headerFontSize: 24,
+  headerTextTransform: "capitalize" as TextTransform,
   headerDateFormat: "MMMM yyyy",
 
   dayLabelFontFamily: DEFAULT_FONT_FAMILY,
   dayLabelColor: DEFAULT_FONT_COLOR_ACTIVE,
   dayLabelFontSize: 12,
+  dayLabelTextTransform: "uppercase" as TextTransform,
   dayLabelDateFormat: "EEEEEE",
 
   dayFontFamily: DEFAULT_FONT_FAMILY,
@@ -170,6 +174,7 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
             fontSize: theme.headerFontSize,
             fontFamily: theme.headerFontFamily,
             color: theme.headerFontColor,
+            textTransform: theme.headerTextTransform,
           }}
         >
           {headerText}
@@ -192,6 +197,7 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
                     color: theme.dayLabelColor,
                     fontFamily: theme.dayLabelFontFamily,
                     fontSize: theme.dayLabelFontSize,
+                    textTransform: theme.dayLabelTextTransform,
                   }}
                 >
                   {dayLabelText}
@@ -311,6 +317,8 @@ const DayItem = React.memo(
       );
     }
 
+    const padding = 10;
+
     return (
       <TouchableOpacity
         onPress={() => onDateSelect?.(date, { isSelected })}
@@ -318,13 +326,23 @@ const DayItem = React.memo(
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          padding: 5,
-          backgroundColor: isSelected
-            ? theme.selectedDayBackgroundColor
-            : "transparent",
-          borderRadius: 5,
+          flexDirection: "row",
+          padding,
         }}
       >
+        <View
+          style={{
+            flex: 0,
+            aspectRatio: 1,
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            backgroundColor: isSelected
+              ? theme.selectedDayBackgroundColor
+              : "transparent",
+            borderRadius: 5,
+          }}
+        />
         <Text
           style={{
             color,
@@ -336,8 +354,10 @@ const DayItem = React.memo(
         </Text>
         <View
           style={{
+            position: "absolute",
             width: 5,
             height: 5,
+            bottom: padding / 2,
             borderRadius: 5,
             backgroundColor: isToday
               ? theme.todayIndicatorDotColor
