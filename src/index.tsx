@@ -29,15 +29,26 @@ import InfinitePager, {
 } from "react-native-infinite-pager";
 
 const DEFAULT_THEME = {
-  textActiveColor: "black",
-  textInactiveColor: "grey",
   todayIndicatorDotColor: "tomato",
   selectedDayBackgroundColor: "rgba(0, 0, 255, 0.25)",
-  fontFamily: "sans-serif",
-  dayFontSize: 12,
-  dayLabelFormat: "EEEEEE",
-  headerDateFormat: "MMMM yyyy",
+  selectedDayFontColor: "black",
+
+  headerFontFamily: "sans-serif",
+  headerFontColor: "black",
   headerFontSize: 24,
+  headerDateFormat: "MMMM yyyy",
+
+  dayLabelFontFamily: "sans-serif",
+  dayLabelColor: "black",
+  dayLabelFontSize: 12,
+  dayLabelDateFormat: "EEEEEE",
+
+  dayFontFamily: "sans-serif",
+  dayFontColor: "black",
+  dayInactiveFontColor: "grey",
+  daySelectedFontColor: "black",
+  dayFontSize: 12,
+
   inactiveOpacity: 1,
 };
 
@@ -52,7 +63,7 @@ export type DayComponentType = (props: {
   isToday: boolean;
 }) => JSX.Element | null;
 
-export type TitleComponentType = (props: { date: Date }) => JSX.Element | null;
+export type HeaderComponentType = (props: { date: Date }) => JSX.Element | null;
 
 type ImperativeApiOptions = {
   animated?: boolean;
@@ -63,7 +74,7 @@ const CalendarContext = React.createContext({
   selectedDate: null as Date | null | undefined,
   onDateSelect: (() => {}) as OnDateSelect,
   DayComponent: undefined as DayComponentType | undefined,
-  TitleComponent: undefined as TitleComponentType | undefined,
+  HeaderComponent: undefined as HeaderComponentType | undefined,
   theme: DEFAULT_THEME,
   pageInterpolator: defaultPageInterpolator,
 });
@@ -101,7 +112,7 @@ function defaultPageInterpolator({
 }
 
 export const MonthPage = React.memo(({ index }: { index: number }) => {
-  const { referenceDate, TitleComponent, theme } = useCalendarContext();
+  const { referenceDate, HeaderComponent, theme } = useCalendarContext();
   const firstDayOfMonth = useMemo(
     () => addMonths(referenceDate, index),
     [referenceDate, index]
@@ -111,7 +122,7 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
     () => lastDayOfMonth(firstDayOfMonth),
     [firstDayOfMonth]
   );
-  const title = format(firstDayOfMonth, theme.headerDateFormat);
+  const headerText = format(firstDayOfMonth, theme.headerDateFormat);
   const weekStarts = useMemo(
     () =>
       eachWeekOfInterval({
@@ -135,28 +146,37 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
   );
   return (
     <Animated.View style={{ alignItems: "center" }}>
-      {TitleComponent ? (
-        <TitleComponent date={firstDayOfMonth} />
+      {HeaderComponent ? (
+        <HeaderComponent date={firstDayOfMonth} />
       ) : (
         <Text
           style={{
             fontSize: theme.headerFontSize,
-            color: theme.textActiveColor,
+            fontFamily: theme.headerFontFamily,
+            color: theme.headerFontColor,
           }}
         >
-          {title}
+          {headerText}
         </Text>
       )}
       <View style={styles.row}>
         <View style={styles.dayLabelRow}>
           {weeks[0].map((day) => {
-            const dayLabel = format(day, theme.dayLabelFormat);
+            const dayLabelText = format(day, theme.dayLabelDateFormat);
             return (
               <View
                 key={`day-label-${day.toISOString()}`}
                 style={styles.dayLabelContainer}
               >
-                <Text style={{ color: theme.textActiveColor }}>{dayLabel}</Text>
+                <Text
+                  style={{
+                    color: theme.dayLabelColor,
+                    fontFamily: theme.dayLabelFontFamily,
+                    fontSize: theme.dayLabelFontSize,
+                  }}
+                >
+                  {dayLabelText}
+                </Text>
               </View>
             );
           })}
@@ -255,9 +275,12 @@ const DayItem = React.memo(
     theme,
   }: DayProps) => {
     const dayText = format(date, "d");
-    const color = isInDisplayedMonth
-      ? theme.textActiveColor
-      : theme.textInactiveColor;
+    const deselectedColor = isInDisplayedMonth
+      ? theme.dayFontColor
+      : theme.dayInactiveFontColor;
+
+    const color = isSelected ? theme.daySelectedFontColor : deselectedColor;
+
     if (DayComponent) {
       return (
         <DayComponent
@@ -283,7 +306,15 @@ const DayItem = React.memo(
           borderRadius: 5,
         }}
       >
-        <Text style={{ color }}>{dayText}</Text>
+        <Text
+          style={{
+            color,
+            fontSize: theme.dayFontSize,
+            fontFamily: theme.dayFontFamily,
+          }}
+        >
+          {dayText}
+        </Text>
         <View
           style={{
             width: 5,
@@ -311,7 +342,7 @@ type CalendarProps = {
   onMonthChange?: (date: Date) => void;
   currentDate?: Date;
   DayComponent?: DayComponentType;
-  TitleComponent?: (props: { date: Date }) => JSX.Element | null;
+  HeaderComponent?: (props: { date: Date }) => JSX.Element | null;
   theme?: Partial<typeof DEFAULT_THEME>;
   monthBuffer?: number;
   minDate?: Date;
@@ -326,7 +357,7 @@ function Calendar(
     onMonthChange,
     currentDate,
     DayComponent,
-    TitleComponent,
+    HeaderComponent,
     theme = {},
     monthBuffer = 1,
     minDate,
@@ -420,7 +451,7 @@ function Calendar(
       selectedDate,
       onDateSelect,
       DayComponent,
-      TitleComponent,
+      HeaderComponent,
       theme: fullTheme,
       pageInterpolator,
     }),
@@ -428,7 +459,7 @@ function Calendar(
       selectedDate,
       onDateSelect,
       DayComponent,
-      TitleComponent,
+      HeaderComponent,
       fullTheme,
       pageInterpolator,
     ]
