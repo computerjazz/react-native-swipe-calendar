@@ -9,7 +9,7 @@ Fully native interactions powered by [Reanimated 2](https://github.com/kmagiera/
 
 1. Follow installation instructions for [reanimated](https://github.com/kmagiera/react-native-reanimated) and [react-native-gesture-handler](https://github.com/kmagiera/react-native-gesture-handler)
 2. `npm install` or `yarn add` `react-native-swipe-calendar`
-3. `import InfinitePager from 'react-native-swipe-calendar'`
+3. `import Calendar from 'react-native-swipe-calendar'`
 
 ### Props
 
@@ -94,7 +94,7 @@ export type CalendarImperativeApi = {
 
 ### Example
 
-https://snack.expo.dev/@computerjazz/infinite-pager
+https://snack.expo.dev/@computerjazz/react-native-swipe-calendar
 
 ```typescript
 import React, {
