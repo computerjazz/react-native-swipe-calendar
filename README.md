@@ -60,7 +60,9 @@ const DEFAULT_THEME = {
 
 ### Hooks
 
-If you render your own components via `DayComponent`, you may need access to more internal state than is available on props. This state may be accessed via the exported `useCalendarContext()` hook:
+If you render your own components via `DayComponent`, you may need access to more internal state than is available on props. This state may be accessed via the exported `useCalendarContext()` hook. 
+
+>NOTE: Be careful about performance! Lots of `DayCompoennts` are rendered at any given time. You may need to wrap memoized inner wrappers around your custom components.
 
 ```typescript
 type CalendarContextValue = {
