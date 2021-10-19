@@ -288,9 +288,9 @@ const DayItem = React.memo(
 );
 
 export type CalendarImperativeApi = {
-  incrementMonth: () => void;
-  decrementMonth: () => void;
-  setMonth: (date: Date) => void;
+  incrementMonth: (options?: ImperativeApiOptions) => void;
+  decrementMonth: (options?: ImperativeApiOptions) => void;
+  setMonth: (date: Date, options?: ImperativeApiOptions) => void;
 };
 
 type CalendarProps = {
@@ -302,6 +302,8 @@ type CalendarProps = {
   TitleComponent?: (props: { date: Date }) => JSX.Element | null;
   theme?: Partial<typeof DEFAULT_THEME>;
   monthBuffer?: number;
+  minDate?: Date;
+  maxDate?: Date;
 };
 
 function Calendar(
@@ -314,6 +316,8 @@ function Calendar(
     TitleComponent,
     theme = {},
     monthBuffer = 1,
+    minDate,
+    maxDate,
   }: CalendarProps,
   ref: React.ForwardedRef<CalendarImperativeApi>
 ) {
@@ -321,6 +325,16 @@ function Calendar(
   const pagerRef = useRef<InfinitePagerImperativeApi>(null);
   const currentDateRef = useRef(currentDate);
   const currentPageRef = useRef(0);
+
+  const minPageIndex = useMemo(() => {
+    if (!minDate) return -Infinity;
+    return differenceInCalendarMonths(initialDateRef.current, minDate) * -1;
+  }, [minDate]);
+
+  const maxPageIndex = useMemo(() => {
+    if (!maxDate) return Infinity;
+    return differenceInCalendarMonths(initialDateRef.current, maxDate) * -1;
+  }, [maxDate]);
 
   const onMonthChangeRef = useRef(onMonthChange);
   onMonthChangeRef.current = onMonthChange;
@@ -405,6 +419,8 @@ function Calendar(
         PageComponent={MonthPage}
         pageBuffer={monthBuffer}
         onPageChange={onPageChange}
+        minIndex={minPageIndex}
+        maxIndex={maxPageIndex}
       />
     </CalendarContext.Provider>
   );
