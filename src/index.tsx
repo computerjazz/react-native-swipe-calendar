@@ -6,7 +6,13 @@ import React, {
   useImperativeHandle,
   useCallback,
 } from "react";
-import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  Platform,
+} from "react-native";
 import Animated, {
   useAnimatedStyle,
   interpolate,
@@ -28,25 +34,30 @@ import InfinitePager, {
   PageInterpolatorParams,
 } from "react-native-infinite-pager";
 
+const DEFAULT_FONT_FAMILY =
+  Platform.OS === "ios" ? "Helvetica Neue" : "sans-serif";
+const DEFAULT_FONT_COLOR_ACTIVE = "black";
+const DEFAULT_FONT_COLOR_INACTIVE = "gray";
+
 const DEFAULT_THEME = {
   todayIndicatorDotColor: "tomato",
   selectedDayBackgroundColor: "rgba(0, 0, 255, 0.25)",
-  selectedDayFontColor: "black",
+  selectedDayFontColor: DEFAULT_FONT_COLOR_ACTIVE,
 
-  headerFontFamily: "sans-serif",
-  headerFontColor: "black",
+  headerFontFamily: DEFAULT_FONT_FAMILY,
+  headerFontColor: DEFAULT_FONT_COLOR_ACTIVE,
   headerFontSize: 24,
   headerDateFormat: "MMMM yyyy",
 
-  dayLabelFontFamily: "sans-serif",
-  dayLabelColor: "black",
+  dayLabelFontFamily: DEFAULT_FONT_FAMILY,
+  dayLabelColor: DEFAULT_FONT_COLOR_ACTIVE,
   dayLabelFontSize: 12,
   dayLabelDateFormat: "EEEEEE",
 
-  dayFontFamily: "sans-serif",
-  dayFontColor: "black",
-  dayInactiveFontColor: "grey",
-  daySelectedFontColor: "black",
+  dayFontFamily: DEFAULT_FONT_FAMILY,
+  dayFontColor: DEFAULT_FONT_COLOR_ACTIVE,
+  dayInactiveFontColor: DEFAULT_FONT_COLOR_INACTIVE,
+  daySelectedFontColor: DEFAULT_FONT_COLOR_ACTIVE,
   dayFontSize: 12,
 
   inactiveOpacity: 1,
