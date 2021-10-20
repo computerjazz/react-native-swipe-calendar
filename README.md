@@ -1,7 +1,7 @@
 # React Native Swipe Calendar
 
 A swipeable calendar component for React Native.<br />
-Fully native interactions powered by [Reanimated 2](https://github.com/kmagiera/react-native-reanimated) and [React Native Gesture Handler](https://github.com/kmagiera/react-native-gesture-handler)
+Fully native interactions powered by [Reanimated 2](https://github.com/kmagiera/react-native-reanimated) and [React Native Gesture Handler](https://github.com/kmagiera/react-native-gesture-handler).
 
 ![SwipeCalendar demo](https://i.imgur.com/5dsYg9M.gif)
 
@@ -61,7 +61,7 @@ type CalendarProps = {
 
 #### Custom pageInterpolator
 
-The `pageInterpolator` prop enables customization of page animations and are built using a Reanimated "worklet" function. For example, the following `pageInterpolator` will scale up upcoming months and fade in as they enter, then rotate and fade out as they leave:
+The `pageInterpolator` prop enables customization of page animations using a Reanimated "worklet" function. For example, the following `pageInterpolator` will scale up upcoming months and fade in as they enter, then rotate and fade out as they leave:
 
 ```typescript
 function pageInterpolator({ focusAnim }: CalendarPageInterpolatorParams) {
@@ -86,7 +86,7 @@ function pageInterpolator({ focusAnim }: CalendarPageInterpolatorParams) {
 
 ### Hooks
 
-If you render your own components via `DayComponent`, you may need access to more internal state than is available on props. This state may be accessed via the exported `useCalendarContext()` hook. 
+If you render your own components via `DayComponent` prop or other custom view, you may need access to more internal state than is available on props. This state may be accessed via the exported `useCalendarContext()` hook. 
 
 >NOTE: Be careful about performance! Lots of instances of `DayComponent` are rendered at any given time. You may need to wrap memoized inner wrappers around your custom components.
 
@@ -94,29 +94,41 @@ If you render your own components via `DayComponent`, you may need access to mor
 type CalendarContextValue = {
   referenceDate: Date,
   selectedDate: Date | null | undefined,
-  onDateSelect: (() => {}) as OnDateSelect,
-  DayComponent: DayComponentType | undefined,
-  TitleComponent: TitleComponentType | undefined,
+  onDateSelect: OnDateSelect,
+  DayComponent:  DayComponentType | undefined,
+  DayLabelComponent: DayLabelComponentType | undefined,
+  HeaderComponent: HeaderComponentType | undefined,
   theme: typeof DEFAULT_THEME,
-});
+  pageInterpolator: typeof defaultPageInterpolator,
+}
+
+const calendarContext = useCalendarContext()
+
 ```
 
 
 ### Imperative Api
 
 ```typescript
-export type CalendarImperativeApi = {
-  incrementMonth: () => void;
-  decrementMonth: () => void;
-  setMonth: (date: Date) => void;
-};
+type CalendarImperativeApi = {
+  incrementMonth: (options?: ImperativeApiOptions) => void;
+  decrementMonth: (options?: ImperativeApiOptions) => void;
+  setMonth: (date: Date, options?: ImperativeApiOptions) => void;
+}
+
+const calendarRef = useRef<CalendarImperativeApi>(null)
+
+const onIncrementButtonPress = () => calendarRef.current?.incrementMonth()
+
+<Calendar ref={calendarRef} />
+
 ```
 
 | Name             | Type                   | Description           |
 | :--------------- | :--------------------- | :-------------------- |
-| `incrementMonth` | `() => void`           | Go to next month.     |
-| `decrementMonth` | `() => void`           | Go to previous month. |
-| `setMonth`       | `(date: Date) => void` | Go to given month.    |
+| `incrementMonth` | `(options: ImperativeApiOptions) => void`           | Go to next month.     |
+| `decrementMonth` | `(options: ImperativeApiOptions) => void`           | Go to previous month. |
+| `setMonth`       | `(date: Date, options: ImperativeApiOptions) => void` | Go to given month.    |
 
 ### Example
 
