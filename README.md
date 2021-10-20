@@ -64,14 +64,22 @@ type CalendarProps = {
 The `pageInterpolator` prop enables customization of page animations using a Reanimated "worklet" function. For example, the following `pageInterpolator` will scale up upcoming months and fade in as they enter, then rotate and fade out as they leave:
 
 ```typescript
+// Example
 function pageInterpolator({ focusAnim }: CalendarPageInterpolatorParams) {
   "worklet"
   
   const inputRange = [-1, 0, 1]
   
-  const zIndex = interpolate(focusAnim.value, inputRange, [0, 1, 0])
+  // Ensure the current month has a higher zIndex than the surrounding months
+  const zIndex = interpolate(focusAnim.value, inputRange, [0, 99, 0])
+  
+  // Fade the current month as it enters/leaves focus
   const opacity = interpolate(focusAnim.value, inputRange, [0, 1, 0])
+  
+  // Rotate the current month as it leaves focus
   const rotationDeg = interpolate(focusAnim.value, inputRange, [360, 0, 0])
+  
+  // Scale up the incoming month
   const scale = interpolate(focusAnim.value, inputRange, [2, 1, 0.25])
   
   return {
@@ -102,7 +110,23 @@ type CalendarContextValue = {
   pageInterpolator: typeof defaultPageInterpolator,
 }
 
-const calendarContext = useCalendarContext()
+// Example
+function MyCustomDayComponent({ date, isSelected }) {
+  const { onDateSelect } = useCalendarContext()
+  
+  // Forward to the `onDateSelect` prop
+  const onDayPress = () => onDateSelect(date, { isSelected })
+  
+  return (
+  <TouchableOpacity onPress={onDayPress}>
+    <Text>
+      {date.getDate()}
+    </Text>
+  </TouchableOpacity>
+  )
+}
+
+
 
 ```
 
@@ -110,17 +134,30 @@ const calendarContext = useCalendarContext()
 ### Imperative Api
 
 ```typescript
+
+type ImperativeApiOptions = {
+  animated?: boolean;
+}
+
 type CalendarImperativeApi = {
   incrementMonth: (options?: ImperativeApiOptions) => void;
   decrementMonth: (options?: ImperativeApiOptions) => void;
   setMonth: (date: Date, options?: ImperativeApiOptions) => void;
 }
 
-const calendarRef = useRef<CalendarImperativeApi>(null)
+// Example
+function MyComponent() {
 
-const onIncrementButtonPress = () => calendarRef.current?.incrementMonth()
-
-<Calendar ref={calendarRef} />
+  const calendarRef = useRef<CalendarImperativeApi>(null)
+  const onIncrementButtonPress = () => calendarRef.current?.incrementMonth()
+  
+  return (
+    <>
+     <Calendar ref={calendarRef} />
+     <MyButton onPress={onIncrementButtonPress} />
+    </>
+  )
+}
 
 ```
 
