@@ -4,6 +4,9 @@ import { format, isSameDay } from "date-fns";
 import { DayProps, DayWrapperProps, OnDateSelect } from "./types";
 import { useCalendarContext } from "./context";
 
+// The calendar renders a lot of Days, so we wrap them in order to
+// prevent context updates from re-rendering everything
+
 export const DayWrapper = React.memo(
   ({ date, isInDisplayedMonth, dateFormatted }: DayWrapperProps) => {
     const dateRef = useRef(date);

@@ -8,7 +8,7 @@ import {
 } from "./types";
 
 export const CalendarContext = React.createContext({
-  referenceDate: new Date(),
+  referenceDate: new Date(), // This represents the month at "Page 0" of the infinite pager. All other months are an offset of this month.
   selectedDate: null as Date | null | undefined,
   onDateSelect: (() => {}) as OnDateSelect,
   DayComponent: undefined as DayComponentType | undefined,

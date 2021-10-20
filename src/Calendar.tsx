@@ -64,7 +64,8 @@ function Calendar(
 
   const fullTheme: typeof DEFAULT_THEME = useMemo(() => {
     const updatedTheme = { ...DEFAULT_THEME, ...theme };
-
+    // If the theme object is defined inline, we only want to trigger context updates
+    // if the values contained actually change.
     if (isEqual(fullThemeRef.current, updatedTheme)) {
       return fullThemeRef.current;
     } else {
@@ -94,6 +95,7 @@ function Calendar(
   );
 
   useEffect(() => {
+    // Hard set the page if the passed-in currentDate changes and the calendar isn't already displaying that month.
     if (
       currentDate &&
       currentDateRef.current &&

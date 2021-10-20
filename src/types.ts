@@ -33,7 +33,7 @@ export type CalendarPageInterpolator = (
 ) => ReturnType<typeof useAnimatedStyle>;
 
 export type CalendarProps = {
-  selectedDate?: Date | null;
+  selectedDate?: Date | null; // TODO: suppoort multiple selected dates (likely using a Set())
   onDateSelect?: OnDateSelect;
   onMonthChange?: (date: Date) => void;
   currentDate?: Date;
@@ -50,7 +50,7 @@ export type CalendarProps = {
 
 export type DayProps = {
   date: Date;
-  isInDisplayedMonth: boolean;
+  isInDisplayedMonth: boolean; // Dates that are in months previous/after the current month, but in weeks containing dates within the current month will also display.
   isSelected: boolean;
   isToday: boolean;
   DayComponent?: DayComponentType;
