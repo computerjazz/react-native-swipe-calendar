@@ -56,7 +56,7 @@ type CalendarProps = {
 |`minDate`|`Date`|The minimum date the calendar will display|
 |`maxDate`|`Date`|The maximum date the calendar will display|
 |`pageInterpolator`|`typeof defaultPageInterpolator`| A worklet to customize page animations. Returns an animated style|
-|`simultaneousHandlers`|`React.Ref<unknown> | React.Ref<unknown>[]`| Any RNGH handler refs that wrap the calendar.|
+|`simultaneousHandlers`|`React.Ref<unknown>, React.Ref<unknown>[]`| Any RNGH handler refs that wrap the calendar.|
 
 
 #### Custom pageInterpolator
