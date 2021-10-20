@@ -1,7 +1,7 @@
 # React Native Swipe Calendar
 
 A swipeable calendar component for React Native.<br />
-Fully native interactions powered by [Reanimated 2](https://github.com/kmagiera/react-native-reanimated) and [React Native Gesture Handler](https://github.com/kmagiera/react-native-gesture-handler)
+Fully native interactions powered by [Reanimated 2](https://github.com/kmagiera/react-native-reanimated) and [React Native Gesture Handler](https://github.com/kmagiera/react-native-gesture-handler).
 
 ![SwipeCalendar demo](https://i.imgur.com/5dsYg9M.gif)
 
@@ -14,7 +14,9 @@ Fully native interactions powered by [Reanimated 2](https://github.com/kmagiera/
 ### Props
 
 ```typescript
-type TitleComponentType = (props: { date: Date }) => JSX.Element | null;
+type HeaderComponent = (props: { date: Date }) => JSX.Element | null;
+
+type DayLabelComponentType = (props: { date: Date }) => JSX.Element | null;
 
 type DayComponentType = (props: {
   date: Date;
@@ -28,23 +30,17 @@ type CalendarProps = {
   onDateSelect?: OnDateSelect;
   onMonthChange?: (date: Date) => void;
   currentDate?: Date;
+  HeaderComponent?: HeaderComponentType;
+  DayLabelComponent?: DayLabelComponentType;
   DayComponent?: DayComponentType;
-  TitleComponent?: TitleComponentType;
   theme?: Partial<typeof DEFAULT_THEME>;
+  monthBuffer?: number;
+  minDate?: Date;
+  maxDate?: Date;
+  pageInterpolator?: typeof defaultPageInterpolator;
+  simultaneousHandlers?: React.Ref<unknown> | React.Ref<unknown>[];
 };
 
-const DEFAULT_THEME = {
-  textActiveColor: "black",
-  textInactiveColor: "grey",
-  todayIndicatorDotColor: "tomato",
-  selectedDayBackgroundColor: "rgba(0, 0, 255, 0.25)",
-  fontFamily: "sans-serif",
-  dayFontSize: 12,
-  dayLabelFormat: "EEEEEE",
-  headerDateFormat: "MMMM yyyy",
-  headerFontSize: 24,
-  inactiveOpacity: 1,
-};
 ```
 
 | Name             | Type                            |Description    |
@@ -54,13 +50,43 @@ const DEFAULT_THEME = {
 | `onMonthChange`  | `(date: Date) => void`          | Callback invoked when the month is changed.   |
 | `currentDate`    | `Date`                          | Date to initialize the calendar with.         |
 | `theme`          | `Partial<typeof DEFAULT_THEME>` | Overrides for default fonts and colors.       |
+| `HeaderComponent` | `HeaderComponentType`            | Custom replacement for Header component.      |
 | `DayComponent`   | `DayComponentType`              | Custom replacement for Day compoent.         |
-| `TitleComponent` | `TitleComponentType`            | Custom replacement for Header component.      |
+| `DayLabelComponent` | `DayLabelComponentType`            | Custom replacement for Day Label component ("Su", "Mo", etc).      |
+|`minDate`|`Date`|The minimum date the calendar will display|
+|`maxDate`|`Date`|The maximum date the calendar will display|
+|`pageInterpolator`|`typeof defaultPageInterpolator`| A worklet to customize page animations. Returns an animated style|
+|`simultaneousHandlers`|`React.Ref<unknown>, React.Ref<unknown>[]`| Any RNGH handler refs that wrap the calendar.|
+
+
+#### Custom pageInterpolator
+
+The `pageInterpolator` prop enables customization of page animations using a Reanimated "worklet" function. For example, the following `pageInterpolator` will scale up upcoming months and fade in as they enter, then rotate and fade out as they leave:
+
+```typescript
+function pageInterpolator({ focusAnim }: CalendarPageInterpolatorParams) {
+  "worklet"
+  
+  const inputRange = [-1, 0, 1]
+  
+  const zIndex = interpolate(focusAnim.value, inputRange, [0, 1, 0])
+  const opacity = interpolate(focusAnim.value, inputRange, [0, 1, 0])
+  const rotationDeg = interpolate(focusAnim.value, inputRange, [360, 0, 0])
+  const scale = interpolate(focusAnim.value, inputRange, [2, 1, 0.25])
+  
+  return {
+    opacity,
+    zIndex,
+    transform: [{ rotate: `${rotationDeg}deg` }, { scale }]
+  }
+}
+```
+![pageInterpolator demo](https://i.imgur.com/GRGqygt.gif)
 
 
 ### Hooks
 
-If you render your own components via `DayComponent`, you may need access to more internal state than is available on props. This state may be accessed via the exported `useCalendarContext()` hook. 
+If you render your own components via `DayComponent` prop or other custom view, you may need access to more internal state than is available on props. This state may be accessed via the exported `useCalendarContext()` hook. 
 
 >NOTE: Be careful about performance! Lots of instances of `DayComponent` are rendered at any given time. You may need to wrap memoized inner wrappers around your custom components.
 
@@ -68,29 +94,41 @@ If you render your own components via `DayComponent`, you may need access to mor
 type CalendarContextValue = {
   referenceDate: Date,
   selectedDate: Date | null | undefined,
-  onDateSelect: (() => {}) as OnDateSelect,
-  DayComponent: DayComponentType | undefined,
-  TitleComponent: TitleComponentType | undefined,
+  onDateSelect: OnDateSelect,
+  DayComponent:  DayComponentType | undefined,
+  DayLabelComponent: DayLabelComponentType | undefined,
+  HeaderComponent: HeaderComponentType | undefined,
   theme: typeof DEFAULT_THEME,
-});
+  pageInterpolator: typeof defaultPageInterpolator,
+}
+
+const calendarContext = useCalendarContext()
+
 ```
 
 
 ### Imperative Api
 
 ```typescript
-export type CalendarImperativeApi = {
-  incrementMonth: () => void;
-  decrementMonth: () => void;
-  setMonth: (date: Date) => void;
-};
+type CalendarImperativeApi = {
+  incrementMonth: (options?: ImperativeApiOptions) => void;
+  decrementMonth: (options?: ImperativeApiOptions) => void;
+  setMonth: (date: Date, options?: ImperativeApiOptions) => void;
+}
+
+const calendarRef = useRef<CalendarImperativeApi>(null)
+
+const onIncrementButtonPress = () => calendarRef.current?.incrementMonth()
+
+<Calendar ref={calendarRef} />
+
 ```
 
 | Name             | Type                   | Description           |
 | :--------------- | :--------------------- | :-------------------- |
-| `incrementMonth` | `() => void`           | Go to next month.     |
-| `decrementMonth` | `() => void`           | Go to previous month. |
-| `setMonth`       | `(date: Date) => void` | Go to given month.    |
+| `incrementMonth` | `(options: ImperativeApiOptions) => void`           | Go to next month.     |
+| `decrementMonth` | `(options: ImperativeApiOptions) => void`           | Go to previous month. |
+| `setMonth`       | `(date: Date, options: ImperativeApiOptions) => void` | Go to given month.    |
 
 ### Example
 
@@ -100,68 +138,52 @@ https://snack.expo.dev/@computerjazz/react-native-swipe-calendar
 import React, {
   useState,
   useRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  useContext,
 } from "react";
 import {
   Text,
   View,
   StyleSheet,
-  FlatList,
   LayoutAnimation,
   TouchableOpacity,
   Platform,
   UIManager,
 } from "react-native";
-import { addMonths, isSameDay } from "date-fns";
+import Calendar from "react-native-swipe-calendar";
 
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental &&
     UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-import Calendar from "react-native-swipe-calendar";
-
 export default function App() {
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const ref = useRef(null);
+  const calendarRef = useRef(null);
+  
   return (
-    <View style={{ flex: 1, backgroundColor: "white", paddingTop: 100 }}>
+    <View style={styles.container}>
       <Calendar
         theme={{ todayIndicatorDotColor: "blue" }}
-        ref={ref}
+        ref={calendarRef}
         currentDate={currentDate}
-        onDateSelect={(date, options) => {
-          if (options.isSelected) {
-            setSelectedDate(null);
-          } else {
-            setSelectedDate(date);
-          }
-        }}
+        onDateSelect={(date, { isSelected }) => setSelectedDate(isSelected ? null : date )}
         selectedDate={selectedDate}
         onMonthChange={(date) => {
           setCurrentDate(date);
           LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         }}
       />
-      <View style={{ height: 20, backgroundColor: "tomato" }} />
       <View style={styles.controlBar}>
         <TouchableOpacity
           style={styles.incDec}
-          onPress={() => {
-            ref.current?.decrementMonth();
-          }}
+          onPress={() => calendarRef.current?.decrementMonth()}
         >
           <Text>{"<"}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.incDec}
-          onPress={() => {
-            ref.current?.incrementMonth();
-          }}
+          onPress={() => calendarRef.current?.incrementMonth()}
         >
           <Text>{">"}</Text>
         </TouchableOpacity>
@@ -171,6 +193,11 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  container: { 
+    flex: 1, 
+    backgroundColor: "white", 
+    paddingTop: 100 
+  },
   incDec: {
     paddingHorizontal: 20,
     padding: 10,
