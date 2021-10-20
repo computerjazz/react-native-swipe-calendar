@@ -192,7 +192,10 @@ function AnimUpdater({
 }) {
   useDerivedValue(() => {
     const rawVal = pageCallbackNode.value + initialMonthIndex;
-    const modVal = rawVal % 12;
+    let modVal = rawVal % 12;
+    if (modVal < 0) {
+      modVal = 12 + modVal;
+    }
     monthAnimCallbackNode.value = modVal;
   }, [pageCallbackNode, initialMonthIndex]);
 
