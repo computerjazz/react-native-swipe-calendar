@@ -121,11 +121,16 @@ type CalendarImperativeApi = {
   setMonth: (date: Date, options?: ImperativeApiOptions) => void;
 }
 
-const calendarRef = useRef<CalendarImperativeApi>(null)
+function MyComponent() {
 
-const onIncrementButtonPress = () => calendarRef.current?.incrementMonth()
-
-<Calendar ref={calendarRef} />
+  const calendarRef = useRef<CalendarImperativeApi>(null)
+  const onIncrementButtonPress = () => calendarRef.current?.incrementMonth()
+  
+  return (
+    <Calendar ref={calendarRef} />
+    <MyButton onPress={onIncrementButtonPress} />
+  )
+}
 
 ```
 
