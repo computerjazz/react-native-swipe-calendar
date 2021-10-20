@@ -162,7 +162,7 @@ export default function App() {
   const calendarRef = useRef(null);
   
   return (
-    <View style={{ flex: 1, backgroundColor: "white", paddingTop: 100 }}>
+    <View style={styles.container}>
       <Calendar
         theme={{ todayIndicatorDotColor: "blue" }}
         ref={calendarRef}
@@ -193,6 +193,11 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  container: { 
+    flex: 1, 
+    backgroundColor: "white", 
+    paddingTop: 100 
+  },
   incDec: {
     paddingHorizontal: 20,
     padding: 10,
