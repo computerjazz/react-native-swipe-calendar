@@ -19,6 +19,10 @@ import {
 } from "./types";
 import { CalendarContext } from "./context";
 import { MonthPage } from "./Month";
+import Animated, {
+  useDerivedValue,
+  useSharedValue,
+} from "react-native-reanimated";
 
 function Calendar(
   {
@@ -35,6 +39,7 @@ function Calendar(
     maxDate,
     pageInterpolator = defaultPageInterpolator,
     simultaneousHandlers,
+    monthAnimCallbackNode,
   }: CalendarProps,
   ref: React.ForwardedRef<CalendarImperativeApi>
 ) {
@@ -42,6 +47,8 @@ function Calendar(
   const pagerRef = useRef<InfinitePagerImperativeApi>(null);
   const currentDateRef = useRef(currentDate);
   const currentPageRef = useRef(0);
+
+  const pageCallbackNode = useSharedValue(0);
 
   const minPageIndex = useMemo(() => {
     if (!minDate) return -Infinity;
@@ -160,9 +167,36 @@ function Calendar(
         maxIndex={maxPageIndex}
         pageInterpolator={pageInterpolatorInternal}
         simultaneousHandlers={simultaneousHandlers}
+        pageCallbackNode={monthAnimCallbackNode ? pageCallbackNode : undefined}
       />
+      {monthAnimCallbackNode && (
+        <AnimUpdater
+          initialMonthIndex={initialDateRef.current.getMonth()}
+          monthAnimCallbackNode={monthAnimCallbackNode}
+          pageCallbackNode={pageCallbackNode}
+        />
+      )}
     </CalendarContext.Provider>
   );
+}
+
+// Separate updater component so we only take the (slight) performance hit if the user provides a callback node
+function AnimUpdater({
+  initialMonthIndex,
+  pageCallbackNode,
+  monthAnimCallbackNode,
+}: {
+  initialMonthIndex: number;
+  pageCallbackNode: Animated.SharedValue<number>;
+  monthAnimCallbackNode: Animated.SharedValue<number>;
+}) {
+  useDerivedValue(() => {
+    const rawVal = pageCallbackNode.value + initialMonthIndex;
+    const modVal = rawVal % 12;
+    monthAnimCallbackNode.value = modVal;
+  }, [pageCallbackNode, initialMonthIndex]);
+
+  return null;
 }
 
 export default React.memo(React.forwardRef(Calendar));

@@ -1,5 +1,5 @@
 import { PageInterpolatorParams } from "react-native-infinite-pager";
-import { useAnimatedStyle } from "react-native-reanimated";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { DEFAULT_THEME } from "./defaults";
 
 export type OnDateSelect =
@@ -46,6 +46,7 @@ export type CalendarProps = {
   maxDate?: Date;
   pageInterpolator?: CalendarPageInterpolator;
   simultaneousHandlers?: React.Ref<unknown> | React.Ref<unknown>[];
+  monthAnimCallbackNode?: Animated.SharedValue<number>;
 };
 
 export type DayProps = {
