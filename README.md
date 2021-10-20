@@ -59,6 +59,31 @@ type CalendarProps = {
 |`simultaneousHandlers`|`React.Ref<unknown> | React.Ref<unknown>[]`| Any RNGH handler refs that wrap the calendar.|
 
 
+#### Custom pageInterpolator
+
+The `pageInterpolator` prop enables customization of page animations and are built using a Reanimated "worklet" function. For example, the following `pageInterpolator` will scale up upcoming months and fade in as they enter, then rotate and fade out as they leave:
+
+```typescript
+function pageInterpolator({ focusAnim }: CalendarPageInterpolatorParams) {
+  "worklet"
+  
+  const inputRange = [-1, 0, 1]
+  
+  const zIndex = interpolate(focusAnim.value, inputRange, [0, 1, 0])
+  const opacity = interpolate(focusAnim.value, inputRange, [0, 1, 0])
+  const rotationDeg = interpolate(focusAnim.value, inputRange, [360, 0, 0])
+  const scale = interpolate(focusAnim.value, inputRange, [2, 1, 0.25])
+  
+  return {
+    opacity,
+    zIndex,
+    transform: [{ rotate: `${rotationDeg}deg` }, { scale }]
+  }
+}
+```
+![pageInterpolator demo](https://i.imgur.com/GRGqygt.gif)
+
+
 ### Hooks
 
 If you render your own components via `DayComponent`, you may need access to more internal state than is available on props. This state may be accessed via the exported `useCalendarContext()` hook. 
