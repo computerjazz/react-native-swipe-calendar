@@ -110,6 +110,11 @@ const calendarContext = useCalendarContext()
 ### Imperative Api
 
 ```typescript
+
+type ImperativeApiOptions = {
+  animated?: boolean;
+}
+
 type CalendarImperativeApi = {
   incrementMonth: (options?: ImperativeApiOptions) => void;
   decrementMonth: (options?: ImperativeApiOptions) => void;
