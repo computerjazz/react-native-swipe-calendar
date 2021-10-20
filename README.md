@@ -111,11 +111,11 @@ type CalendarContextValue = {
 }
 
 // Example
-function MyCustomDayComponent({ date }: { date: Date }) {
+function MyCustomDayComponent({ date, isSelected }) {
   const { onDateSelect } = useCalendarContext()
   
   // Forward to the `onDateSelect` prop
-  const onDayPress = () => onDateSelect(date)
+  const onDayPress = () => onDateSelect(date, { isSelected })
   
   return <TouchableOpacity onPress={onDayPress}><Text>{date.getDate()}</Text></View>
 }
