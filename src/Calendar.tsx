@@ -40,6 +40,8 @@ function Calendar(
     pageInterpolator = defaultPageInterpolator,
     simultaneousHandlers,
     monthAnimCallbackNode,
+    gesturesDisabled,
+    animationConfig,
   }: CalendarProps,
   ref: React.ForwardedRef<CalendarImperativeApi>
 ) {
@@ -151,7 +153,7 @@ function Calendar(
   const pageInterpolatorInternal = useCallback(
     (params: PageInterpolatorParams) => {
       "worklet";
-      return pageInterpolator(Object.assign(params, { theme: fullTheme }));
+      return pageInterpolator(Object.assign({}, params, { theme: fullTheme }));
     },
     [fullTheme, pageInterpolator]
   );
@@ -168,6 +170,8 @@ function Calendar(
         pageInterpolator={pageInterpolatorInternal}
         simultaneousHandlers={simultaneousHandlers}
         pageCallbackNode={monthAnimCallbackNode ? pageCallbackNode : undefined}
+        gesturesDisabled={gesturesDisabled}
+        animationConfig={animationConfig}
       />
       {monthAnimCallbackNode && (
         <AnimUpdater

@@ -47,6 +47,8 @@ export type CalendarProps = {
   pageInterpolator?: CalendarPageInterpolator;
   simultaneousHandlers?: React.Ref<unknown> | React.Ref<unknown>[];
   monthAnimCallbackNode?: Animated.SharedValue<number>;
+  gesturesDisabled?: boolean;
+  animationConfig?: Partial<Animated.WithSpringConfig>;
 };
 
 export type DayProps = {
