@@ -117,7 +117,13 @@ function MyCustomDayComponent({ date, isSelected }) {
   // Forward to the `onDateSelect` prop
   const onDayPress = () => onDateSelect(date, { isSelected })
   
-  return <TouchableOpacity onPress={onDayPress}><Text>{date.getDate()}</Text></View>
+  return (
+  <TouchableOpacity onPress={onDayPress}>
+    <Text>
+      {date.getDate()}
+    </Text>
+  </TouchableOpacity>
+  )
 }
 
 
@@ -146,8 +152,10 @@ function MyComponent() {
   const onIncrementButtonPress = () => calendarRef.current?.incrementMonth()
   
   return (
-    <Calendar ref={calendarRef} />
-    <MyButton onPress={onIncrementButtonPress} />
+    <>
+     <Calendar ref={calendarRef} />
+     <MyButton onPress={onIncrementButtonPress} />
+    </>
   )
 }
 
