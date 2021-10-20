@@ -161,20 +161,22 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
   );
 
   return (
-    <Animated.View style={{ alignItems: "center" }}>
+    <View>
       {HeaderComponent ? (
         <HeaderComponent date={firstDayOfMonth} />
       ) : (
-        <Text
-          style={{
-            fontSize: theme.headerFontSize,
-            fontFamily: theme.headerFontFamily,
-            color: theme.headerFontColor,
-            textTransform: theme.headerTextTransform,
-          }}
-        >
-          {headerText}
-        </Text>
+        <View style={{ alignItems: "center" }}>
+          <Text
+            style={{
+              fontSize: theme.headerFontSize,
+              fontFamily: theme.headerFontFamily,
+              color: theme.headerFontColor,
+              textTransform: theme.headerTextTransform,
+            }}
+          >
+            {headerText}
+          </Text>
+        </View>
       )}
       <View style={styles.row}>
         <View style={styles.dayLabelRow}>
@@ -228,7 +230,7 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
           })}
         </Animated.View>
       </Animated.View>
-    </Animated.View>
+    </View>
   );
 });
 
