@@ -5350,10 +5350,10 @@ react-native-gesture-handler@^1.10.3:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
-react-native-infinite-pager@0.0.9:
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/react-native-infinite-pager/-/react-native-infinite-pager-0.0.9.tgz#3c22bedb2fca611a01d4bd085fe268db35921dac"
-  integrity sha512-OYuZ5DuaQySECGPch3zobHfCUZNSN8eAh84s05i0YSO3H3Ly7r8qMv687Ddjo8gtcPYdJgMSX6IQtADHwuLmzA==
+react-native-infinite-pager@0.0.11:
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/react-native-infinite-pager/-/react-native-infinite-pager-0.0.11.tgz#5e66bb2dc0d8583a4433643a63d77e143d79c430"
+  integrity sha512-ulBCN7Y5ZCsbMB/ppadqeRMGFoVzBwRmkE4u1CzChlUziEd4mdRvwzwaf7ECQv/aZWHIDDSmUxxROcaNTzuxuA==
 
 react-native-reanimated@^2.2.0:
   version "2.2.3"
