@@ -138,68 +138,52 @@ https://snack.expo.dev/@computerjazz/react-native-swipe-calendar
 import React, {
   useState,
   useRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  useContext,
 } from "react";
 import {
   Text,
   View,
   StyleSheet,
-  FlatList,
   LayoutAnimation,
   TouchableOpacity,
   Platform,
   UIManager,
 } from "react-native";
-import { addMonths, isSameDay } from "date-fns";
+import Calendar from "react-native-swipe-calendar";
 
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental &&
     UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-import Calendar from "react-native-swipe-calendar";
-
 export default function App() {
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const ref = useRef(null);
+  const calendarRef = useRef(null);
+  
   return (
     <View style={{ flex: 1, backgroundColor: "white", paddingTop: 100 }}>
       <Calendar
         theme={{ todayIndicatorDotColor: "blue" }}
-        ref={ref}
+        ref={calendarRef}
         currentDate={currentDate}
-        onDateSelect={(date, options) => {
-          if (options.isSelected) {
-            setSelectedDate(null);
-          } else {
-            setSelectedDate(date);
-          }
-        }}
+        onDateSelect={(date, { isSelected }) => setSelectedDate(isSelected ? null : date )}
         selectedDate={selectedDate}
         onMonthChange={(date) => {
           setCurrentDate(date);
           LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         }}
       />
-      <View style={{ height: 20, backgroundColor: "tomato" }} />
       <View style={styles.controlBar}>
         <TouchableOpacity
           style={styles.incDec}
-          onPress={() => {
-            ref.current?.decrementMonth();
-          }}
+          onPress={() => calendarRef.current?.decrementMonth()}
         >
           <Text>{"<"}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.incDec}
-          onPress={() => {
-            ref.current?.incrementMonth();
-          }}
+          onPress={() => calendarRef.current?.incrementMonth()}
         >
           <Text>{">"}</Text>
         </TouchableOpacity>
