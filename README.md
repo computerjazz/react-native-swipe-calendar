@@ -14,7 +14,9 @@ Fully native interactions powered by [Reanimated 2](https://github.com/kmagiera/
 ### Props
 
 ```typescript
-type TitleComponentType = (props: { date: Date }) => JSX.Element | null;
+type HeaderComponent = (props: { date: Date }) => JSX.Element | null;
+
+type DayLabelComponentType = (props: { date: Date }) => JSX.Element | null;
 
 type DayComponentType = (props: {
   date: Date;
@@ -28,23 +30,17 @@ type CalendarProps = {
   onDateSelect?: OnDateSelect;
   onMonthChange?: (date: Date) => void;
   currentDate?: Date;
+  HeaderComponent?: HeaderComponentType;
+  DayLabelComponent?: DayLabelComponentType;
   DayComponent?: DayComponentType;
-  TitleComponent?: TitleComponentType;
   theme?: Partial<typeof DEFAULT_THEME>;
+  monthBuffer?: number;
+  minDate?: Date;
+  maxDate?: Date;
+  pageInterpolator?: typeof defaultPageInterpolator;
+  simultaneousHandlers?: React.Ref<unknown> | React.Ref<unknown>[];
 };
 
-const DEFAULT_THEME = {
-  textActiveColor: "black",
-  textInactiveColor: "grey",
-  todayIndicatorDotColor: "tomato",
-  selectedDayBackgroundColor: "rgba(0, 0, 255, 0.25)",
-  fontFamily: "sans-serif",
-  dayFontSize: 12,
-  dayLabelFormat: "EEEEEE",
-  headerDateFormat: "MMMM yyyy",
-  headerFontSize: 24,
-  inactiveOpacity: 1,
-};
 ```
 
 | Name             | Type                            |Description    |
@@ -54,8 +50,13 @@ const DEFAULT_THEME = {
 | `onMonthChange`  | `(date: Date) => void`          | Callback invoked when the month is changed.   |
 | `currentDate`    | `Date`                          | Date to initialize the calendar with.         |
 | `theme`          | `Partial<typeof DEFAULT_THEME>` | Overrides for default fonts and colors.       |
+| `HeaderComponent` | `HeaderComponentType`            | Custom replacement for Header component.      |
 | `DayComponent`   | `DayComponentType`              | Custom replacement for Day compoent.         |
-| `TitleComponent` | `TitleComponentType`            | Custom replacement for Header component.      |
+| `DayLabelComponent` | `DayLabelComponentType`            | Custom replacement for Day Label component ("Su", "Mo", etc).      |
+|`minDate`|`Date`|The minimum date the calendar will display|
+|`maxDate`|`Date`|The maximum date the calendar will display|
+|`pageInterpolator`|`typeof defaultPageInterpolator`| A worklet to customize page animations. Returns an animated style|
+|`simultaneousHandlers`|`React.Ref<unknown> | React.Ref<unknown>[]`| Any RNGH handler refs that wrap the calendar.|
 
 
 ### Hooks
