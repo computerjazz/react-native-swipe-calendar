@@ -65,7 +65,6 @@ The `pageInterpolator` prop enables customization of page animations using a Rea
 
 ```typescript
 // Example
-
 function pageInterpolator({ focusAnim }: CalendarPageInterpolatorParams) {
   "worklet"
   
@@ -112,7 +111,6 @@ type CalendarContextValue = {
 }
 
 // Example
-
 function MyCustomDayComponent({ date }: { date: Date }) {
   const { onDateSelect } = useCalendarContext()
   
@@ -142,7 +140,6 @@ type CalendarImperativeApi = {
 }
 
 // Example
-
 function MyComponent() {
 
   const calendarRef = useRef<CalendarImperativeApi>(null)
