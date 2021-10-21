@@ -58,80 +58,9 @@ type CalendarProps = {
 |`pageInterpolator`|`typeof defaultPageInterpolator`| A worklet to customize page animations. Returns an animated style|
 |`simultaneousHandlers`|`React.Ref<unknown>, React.Ref<unknown>[]`| Any RNGH handler refs that wrap the calendar.|
 
-
-#### Custom pageInterpolator
-
-The `pageInterpolator` prop enables customization of page animations using a Reanimated "worklet" function. For example, the following `pageInterpolator` will scale up upcoming months and fade in as they enter, then rotate and fade out as they leave:
-
-```typescript
-// Example
-function pageInterpolator({ focusAnim }: CalendarPageInterpolatorParams) {
-  "worklet"
-  
-  const inputRange = [-1, 0, 1]
-  
-  // Ensure the current month has a higher zIndex than the surrounding months
-  const zIndex = interpolate(focusAnim.value, inputRange, [0, 99, 0])
-  
-  // Fade the current month as it enters/leaves focus
-  const opacity = interpolate(focusAnim.value, inputRange, [0, 1, 0])
-  
-  // Rotate the current month as it leaves focus
-  const rotationDeg = interpolate(focusAnim.value, inputRange, [360, 0, 0])
-  
-  // Scale up the incoming month
-  const scale = interpolate(focusAnim.value, inputRange, [2, 1, 0.25])
-  
-  return {
-    opacity,
-    zIndex,
-    transform: [{ rotate: `${rotationDeg}deg` }, { scale }]
-  }
-}
-```
-![pageInterpolator demo](https://i.imgur.com/GRGqygt.gif)
-
-
-### Hooks
-
-If you render your own components via `DayComponent` prop or other custom view, you may need access to more internal state than is available on props. This state may be accessed via the exported `useCalendarContext()` hook. 
-
->NOTE: Be careful about performance! Lots of instances of `DayComponent` are rendered at any given time. You may need to wrap memoized inner wrappers around your custom components.
-
-```typescript
-type CalendarContextValue = {
-  referenceDate: Date,
-  selectedDate: Date | null | undefined,
-  onDateSelect: OnDateSelect,
-  DayComponent:  DayComponentType | undefined,
-  DayLabelComponent: DayLabelComponentType | undefined,
-  HeaderComponent: HeaderComponentType | undefined,
-  theme: typeof DEFAULT_THEME,
-  pageInterpolator: typeof defaultPageInterpolator,
-}
-
-// Example
-function MyCustomDayComponent({ date, isSelected }) {
-  const { onDateSelect } = useCalendarContext()
-  
-  // Forward to the `onDateSelect` prop
-  const onDayPress = () => onDateSelect(date, { isSelected })
-  
-  return (
-  <TouchableOpacity onPress={onDayPress}>
-    <Text>
-      {date.getDate()}
-    </Text>
-  </TouchableOpacity>
-  )
-}
-
-
-
-```
-
-
 ### Imperative Api
+
+Access the imperative api by passing a `ref` to the `Calendar` component: 
 
 ```typescript
 
@@ -166,6 +95,75 @@ function MyComponent() {
 | `incrementMonth` | `(options: ImperativeApiOptions) => void`           | Go to next month.     |
 | `decrementMonth` | `(options: ImperativeApiOptions) => void`           | Go to previous month. |
 | `setMonth`       | `(date: Date, options: ImperativeApiOptions) => void` | Go to given month.    |
+
+### Hooks
+
+If you render your own components via `DayComponent` prop or other custom view, you may need access to more internal state than is available on props. This state may be accessed via the exported `useCalendarContext()` hook. 
+
+>NOTE: Be careful about performance! Lots of instances of `DayComponent` are rendered at any given time. You may need to wrap memoized inner wrappers around your custom components.
+
+```typescript
+type CalendarContextValue = {
+  referenceDate: Date,
+  selectedDate: Date | null | undefined,
+  onDateSelect: OnDateSelect,
+  DayComponent:  DayComponentType | undefined,
+  DayLabelComponent: DayLabelComponentType | undefined,
+  HeaderComponent: HeaderComponentType | undefined,
+  theme: typeof DEFAULT_THEME,
+  pageInterpolator: typeof defaultPageInterpolator,
+}
+
+// Example
+function MyCustomDayComponent({ date, isSelected }) {
+  const { onDateSelect } = useCalendarContext()
+  
+  // Forward to the `onDateSelect` prop
+  const onDayPress = () => onDateSelect(date, { isSelected })
+  
+  return (
+  <TouchableOpacity onPress={onDayPress}>
+    <Text>
+      {date.getDate()}
+    </Text>
+  </TouchableOpacity>
+  )
+}
+```
+
+
+#### Custom pageInterpolator
+
+The `pageInterpolator` prop enables customization of page animations using a Reanimated "worklet" function. For example, the following `pageInterpolator` will scale up upcoming months and fade in as they enter, then rotate and fade out as they leave:
+
+```typescript
+// Example
+function pageInterpolator({ focusAnim }: CalendarPageInterpolatorParams) {
+  "worklet"
+  
+  const inputRange = [-1, 0, 1]
+  
+  // Ensure the current month has a higher zIndex than the surrounding months
+  const zIndex = interpolate(focusAnim.value, inputRange, [0, 99, 0])
+  
+  // Fade the current month as it enters/leaves focus
+  const opacity = interpolate(focusAnim.value, inputRange, [0, 1, 0])
+  
+  // Rotate the current month as it leaves focus
+  const rotationDeg = interpolate(focusAnim.value, inputRange, [360, 0, 0])
+  
+  // Scale up the incoming month
+  const scale = interpolate(focusAnim.value, inputRange, [2, 1, 0.25])
+  
+  return {
+    opacity,
+    zIndex,
+    transform: [{ rotate: `${rotationDeg}deg` }, { scale }]
+  }
+}
+```
+![pageInterpolator demo](https://i.imgur.com/GRGqygt.gif)
+
 
 ### Example
 
