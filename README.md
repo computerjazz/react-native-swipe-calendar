@@ -39,6 +39,7 @@ type CalendarProps = {
   maxDate?: Date;
   pageInterpolator?: typeof defaultPageInterpolator;
   simultaneousHandlers?: React.Ref<unknown> | React.Ref<unknown>[];
+  animationConfig?: Partial<Animated.WithSpringConfig>;
 };
 
 ```
@@ -55,7 +56,8 @@ type CalendarProps = {
 | `DayLabelComponent` | `DayLabelComponentType`            | Custom replacement for Day Label component ("Su", "Mo", etc).      |
 |`minDate`|`Date`|The minimum date the calendar will display|
 |`maxDate`|`Date`|The maximum date the calendar will display|
-|`pageInterpolator`|`typeof defaultPageInterpolator`| A worklet to customize page animations. Returns an animated style|
+|`pageInterpolator`|`typeof defaultPageInterpolator`| A worklet to customize page transition animations. Returns an animated style|
+|`animationConfig`|`Partial<Animated.WithSpringConfig`| An animation spring config object to customize how page transitions animate.|
 |`simultaneousHandlers`|`React.Ref<unknown>, React.Ref<unknown>[]`| Any RNGH handler refs that wrap the calendar.|
 
 ### Imperative Api
