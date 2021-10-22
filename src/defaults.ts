@@ -62,7 +62,7 @@ export function defaultPageInterpolator({
   );
 
   // Before pagewidth is known focusAnim will be a ridiculously high number
-  if (focusAnim.value > 999) {
+  if (Platform.OS === "android" && focusAnim.value > 999) {
     // Android has an issue where on initialization, opacity will get stuck at the initial opaicty,
     // even if it immediately updates later. Hack fix is to omit it from the initial style.
     return { transform: [{ translateX }] };
