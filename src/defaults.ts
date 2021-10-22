@@ -1,5 +1,9 @@
 import { Platform } from "react-native";
-import { interpolate, useAnimatedStyle } from "react-native-reanimated";
+import {
+  Extrapolate,
+  interpolate,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import { CalendarPageInterpolatorParams } from "./types";
 
 const DEFAULT_FONT_FAMILY =
@@ -41,20 +45,31 @@ export function defaultPageInterpolator({
   pageWidth,
 }: CalendarPageInterpolatorParams): ReturnType<typeof useAnimatedStyle> {
   "worklet";
+
+  const inputRange = [-1, 0, 1];
+
+  const translateX = interpolate(focusAnim.value, inputRange, [
+    -pageWidth.value,
+    0,
+    pageWidth.value,
+  ]);
+
+  const opacity = interpolate(
+    focusAnim.value,
+    inputRange,
+    [theme.inactiveOpacity, 1, theme.inactiveOpacity],
+    Extrapolate.CLAMP
+  );
+
+  // Before pagewidth is known focusAnim will be a ridiculously high number
+  if (focusAnim.value > 999) {
+    // Android has an issue where on initialization, opacity will get stuck at the initial opaicty,
+    // even if it immediately updates later. Hack fix is to omit it from the initial style.
+    return { transform: [{ translateX }] };
+  }
+
   return {
-    transform: [
-      {
-        translateX: interpolate(
-          focusAnim.value,
-          [-1, 0, 1],
-          [-pageWidth.value, 0, pageWidth.value]
-        ),
-      },
-    ],
-    opacity: interpolate(
-      focusAnim.value,
-      [-1, 0, 1],
-      [theme.inactiveOpacity, 1, theme.inactiveOpacity]
-    ),
+    transform: [{ translateX }],
+    opacity,
   };
 }
