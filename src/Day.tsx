@@ -79,7 +79,9 @@ export const DayItem = React.memo(
 
     return (
       <TouchableOpacity
-        testID={`react-native-swipe-calendar:${dateFormatted}`}
+        testID={`react-native-swipe-calendar:${dateFormatted}${
+          isInDisplayedMonth ? "" : ":isInDisplayedMonth:false"
+        }`}
         onPress={() => onDateSelect?.(date, { isSelected })}
         style={{
           flex: 1,
