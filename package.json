@@ -17,6 +17,10 @@
       "pre-commit": "pretty-quick --staged"
     }
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/computerjazz/react-native-swipe-calendar.git"
+  },
   "keywords": [
     "react",
     "native",
