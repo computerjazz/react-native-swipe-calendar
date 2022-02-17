@@ -13,8 +13,13 @@ import { useCalendarContext } from "./context";
 import { DayWrapper } from "./Day";
 
 export const MonthPage = React.memo(({ index }: { index: number }) => {
-  const { referenceDate, HeaderComponent, DayLabelComponent, theme } =
-    useCalendarContext();
+  const {
+    referenceDate,
+    HeaderComponent,
+    DayLabelComponent,
+    theme,
+    weekStartsOn,
+  } = useCalendarContext();
   const firstDayOfMonth = useMemo(
     () => addMonths(referenceDate, index),
     [referenceDate, index]
@@ -27,10 +32,15 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
   const headerText = format(firstDayOfMonth, theme.headerDateFormat);
   const weekStarts = useMemo(
     () =>
-      eachWeekOfInterval({
-        start: firstDayOfMonth,
-        end: lastDayOfMo,
-      }),
+      eachWeekOfInterval(
+        {
+          start: firstDayOfMonth,
+          end: lastDayOfMo,
+        },
+        {
+          weekStartsOn,
+        }
+      ),
     [firstDayOfMonth, lastDayOfMo]
   );
 

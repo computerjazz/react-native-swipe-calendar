@@ -42,6 +42,7 @@ function Calendar(
     monthAnimCallbackNode,
     gesturesDisabled,
     animationConfig,
+    weekStartsOn,
   }: CalendarProps,
   ref: React.ForwardedRef<CalendarImperativeApi>
 ) {
@@ -138,6 +139,7 @@ function Calendar(
       DayComponent,
       theme: fullTheme,
       pageInterpolator,
+      weekStartsOn,
     }),
     [
       selectedDate,
@@ -147,6 +149,7 @@ function Calendar(
       DayComponent,
       fullTheme,
       pageInterpolator,
+      weekStartsOn,
     ]
   );
 

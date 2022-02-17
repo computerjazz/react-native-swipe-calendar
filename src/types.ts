@@ -49,6 +49,7 @@ export type CalendarProps = {
   monthAnimCallbackNode?: Animated.SharedValue<number>;
   gesturesDisabled?: boolean;
   animationConfig?: Partial<Animated.WithSpringConfig>;
+  weekStartsOn?: number;
 };
 
 export type DayProps = {
