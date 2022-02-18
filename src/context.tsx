@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
+import { WeekDayIndex } from ".";
 import { defaultPageInterpolator, DEFAULT_THEME } from "./defaults";
 import {
   DayComponentType,
   DayLabelComponentType,
   HeaderComponentType,
   OnDateSelect,
-  WeekStartDay,
 } from "./types";
 
 export const CalendarContext = React.createContext({
@@ -17,7 +17,7 @@ export const CalendarContext = React.createContext({
   HeaderComponent: undefined as HeaderComponentType | undefined,
   theme: DEFAULT_THEME,
   pageInterpolator: defaultPageInterpolator,
-  weekStartsOn: 0 as WeekStartDay,
+  weekStartsOn: 0 as WeekDayIndex,
 });
 
 export function useCalendarContext() {
