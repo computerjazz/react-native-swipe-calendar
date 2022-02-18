@@ -49,7 +49,7 @@ export type CalendarProps = {
   monthAnimCallbackNode?: Animated.SharedValue<number>;
   gesturesDisabled?: boolean;
   animationConfig?: Partial<Animated.WithSpringConfig>;
-  weekStartsOn?: number;
+  weekStartsOn?: WeekStartDay;
 };
 
 export type DayProps = {
@@ -72,3 +72,5 @@ export type DayWrapperProps = {
 export type CalendarPageInterpolatorParams = PageInterpolatorParams & {
   theme: typeof DEFAULT_THEME;
 };
+
+export type WeekStartDay = 0 | 1 | 2 | 3 | 4 | 5 | 6;
