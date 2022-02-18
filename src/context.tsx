@@ -16,6 +16,7 @@ export const CalendarContext = React.createContext({
   HeaderComponent: undefined as HeaderComponentType | undefined,
   theme: DEFAULT_THEME,
   pageInterpolator: defaultPageInterpolator,
+  weekStartsOn: 0,
 });
 
 export function useCalendarContext() {

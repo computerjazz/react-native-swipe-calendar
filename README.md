@@ -40,6 +40,7 @@ type CalendarProps = {
   pageInterpolator?: typeof defaultPageInterpolator;
   simultaneousHandlers?: React.Ref<unknown> | React.Ref<unknown>[];
   animationConfig?: Partial<Animated.WithSpringConfig>;
+  weekStartsOn?: number;
 };
 
 ```
@@ -59,6 +60,7 @@ type CalendarProps = {
 |`pageInterpolator`|`typeof defaultPageInterpolator`| A worklet to customize page transition animations. Returns an animated style|
 |`animationConfig`|`Partial<Animated.WithSpringConfig>`| An animation spring config object to customize how page transitions animate.|
 |`simultaneousHandlers`|`React.Ref<unknown>, React.Ref<unknown>[]`| Any RNGH handler refs that wrap the calendar.|
+|`weekStartsOn`|`number`| Index of the day week starts on.|
 
 ### Imperative Api
 
@@ -114,6 +116,7 @@ type CalendarContextValue = {
   HeaderComponent: HeaderComponentType | undefined,
   theme: typeof DEFAULT_THEME,
   pageInterpolator: typeof defaultPageInterpolator,
+  weekStartsOn: number,
 }
 
 // Example
