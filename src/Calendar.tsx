@@ -42,7 +42,7 @@ function Calendar(
     monthAnimCallbackNode,
     gesturesDisabled,
     animationConfig,
-    weekStartsOn,
+    weekStartsOn = 0, // Sunday is default week start
   }: CalendarProps,
   ref: React.ForwardedRef<CalendarImperativeApi>
 ) {
