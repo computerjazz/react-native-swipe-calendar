@@ -41,7 +41,7 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
           weekStartsOn,
         }
       ),
-    [firstDayOfMonth, lastDayOfMo]
+    [firstDayOfMonth, lastDayOfMo, weekStartsOn]
   );
 
   const weeks = useMemo(
