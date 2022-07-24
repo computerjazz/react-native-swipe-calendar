@@ -39,7 +39,7 @@ type CalendarProps = {
   maxDate?: Date;
   pageInterpolator?: typeof defaultPageInterpolator;
   simultaneousHandlers?: React.Ref<unknown> | React.Ref<unknown>[];
-  animationConfig?: Partial<Animated.WithSpringConfig>;
+  animationConfig?: Partial<WithSpringConfig>;
   weekStartsOn?: number;
 };
 
@@ -58,8 +58,8 @@ type CalendarProps = {
 |`minDate`|`Date`|The minimum date the calendar will display|
 |`maxDate`|`Date`|The maximum date the calendar will display|
 |`pageInterpolator`|`typeof defaultPageInterpolator`| A worklet to customize page transition animations. Returns an animated style|
-|`animationConfig`|`Partial<Animated.WithSpringConfig>`| An animation spring config object to customize how page transitions animate.|
-|`simultaneousHandlers`|`React.Ref<unknown>, React.Ref<unknown>[]`| Any RNGH handler refs that wrap the calendar.|
+|`animationConfig`|`Partial<WithSpringConfig>`| An animation spring config object to customize how page transitions animate.|
+|`simultaneousGestures`|`(ComposedGesture | GestureType)[]`| Any RNGH gestures that wrap the calendar.|
 |`weekStartsOn`|`number`| Index of the day week starts on.|
 
 ### Imperative Api

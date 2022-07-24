@@ -1,5 +1,9 @@
+import { ComposedGesture, GestureType } from "react-native-gesture-handler";
 import { PageInterpolatorParams } from "react-native-infinite-pager";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  WithSpringConfig,
+} from "react-native-reanimated";
 import { DEFAULT_THEME } from "./defaults";
 
 export type OnDateSelect =
@@ -45,10 +49,10 @@ export type CalendarProps = {
   minDate?: Date;
   maxDate?: Date;
   pageInterpolator?: CalendarPageInterpolator;
-  simultaneousHandlers?: React.Ref<unknown> | React.Ref<unknown>[];
+  simultaneousGestures?: (ComposedGesture | GestureType)[];
   monthAnimCallbackNode?: Animated.SharedValue<number>;
   gesturesDisabled?: boolean;
-  animationConfig?: Partial<Animated.WithSpringConfig>;
+  animationConfig?: Partial<WithSpringConfig>;
   weekStartsOn?: WeekDayIndex;
 };
 

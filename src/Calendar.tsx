@@ -38,7 +38,7 @@ function Calendar(
     minDate,
     maxDate,
     pageInterpolator = defaultPageInterpolator,
-    simultaneousHandlers,
+    simultaneousGestures,
     monthAnimCallbackNode,
     gesturesDisabled,
     animationConfig,
@@ -171,7 +171,7 @@ function Calendar(
         minIndex={minPageIndex}
         maxIndex={maxPageIndex}
         pageInterpolator={pageInterpolatorInternal}
-        simultaneousHandlers={simultaneousHandlers}
+        simultaneousGestures={simultaneousGestures}
         pageCallbackNode={monthAnimCallbackNode ? pageCallbackNode : undefined}
         gesturesDisabled={gesturesDisabled}
         animationConfig={animationConfig}
