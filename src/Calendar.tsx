@@ -5,14 +5,6 @@ import React, {
   useImperativeHandle,
   useCallback,
 } from "react";
-import {
-  addMonths,
-  isSameMonth,
-  differenceInCalendarMonths,
-  differenceInYears,
-  differenceInWeeks,
-  differenceInDays,
-} from "date-fns";
 import { isEqual } from "lodash";
 import InfinitePager, {
   InfinitePagerImperativeApi,
@@ -31,17 +23,17 @@ import Animated, {
   useDerivedValue,
   useSharedValue,
 } from "react-native-reanimated";
+import { getAddFn, getDiffFn, getIsSameFn } from "./utils";
+import { WeekPage } from "./Week";
 
-function getDiffFn(interval: PageInterval) {
+function getPageComponent(interval: PageInterval) {
   switch (interval) {
-    case "day":
-      return differenceInDays;
-    case "week":
-      return differenceInWeeks;
     case "year":
-      return differenceInYears;
+    case "day":
+    case "week":
+      return WeekPage;
     case "month":
-      return differenceInCalendarMonths;
+      return MonthPage;
   }
 }
 
@@ -119,7 +111,7 @@ function Calendar(
         const animated = options?.animated ?? true;
         pagerRef.current?.decrementPage({ animated });
       },
-      setMonth: (date: Date, options?: ImperativeApiOptions) => {
+      setPage: (date: Date, options?: ImperativeApiOptions) => {
         const animated = options?.animated ?? false;
         const differ = getDiffFn(pageInterval);
         const page = differ(date, initialDateRef.current);
@@ -131,28 +123,32 @@ function Calendar(
 
   useEffect(() => {
     // Hard set the page if the passed-in currentDate changes and the calendar isn't already displaying that month.
+
+    const isSameFn = getIsSameFn(pageInterval);
+    const diffFn = getDiffFn(pageInterval);
     if (
       currentDate &&
       currentDateRef.current &&
-      !isSameMonth(currentDate, currentDateRef.current)
+      !isSameFn(currentDate, currentDateRef.current)
     ) {
-      const page = differenceInCalendarMonths(
-        currentDate,
-        initialDateRef.current
-      );
+      const page = diffFn(currentDate, initialDateRef.current);
       if (page === currentPageRef.current) return;
       pagerRef.current?.setPage(page, { animated: false });
     }
 
     currentDateRef.current = currentDate;
-  }, [currentDate]);
+  }, [currentDate, pageInterval]);
 
-  const _onPageChange = useCallback((pg: number) => {
-    currentPageRef.current = pg;
-    const currentMonth = addMonths(initialDateRef.current, pg);
-    currentMonth.setDate(1);
-    onPageChangeRef.current?.(currentMonth);
-  }, []);
+  const _onPageChange = useCallback(
+    (pg: number) => {
+      currentPageRef.current = pg;
+      const addFn = getAddFn(pageInterval);
+      const dateWithOffset = addFn(initialDateRef.current, pg);
+      dateWithOffset.setDate(1);
+      onPageChangeRef.current?.(dateWithOffset);
+    },
+    [pageInterval]
+  );
 
   const providerValue = useMemo(
     () => ({
@@ -190,7 +186,7 @@ function Calendar(
     <CalendarContext.Provider value={providerValue}>
       <InfinitePager
         ref={pagerRef}
-        PageComponent={MonthPage}
+        PageComponent={getPageComponent(pageInterval)}
         pageBuffer={pageBuffer}
         onPageChange={_onPageChange}
         minIndex={minPageIndex}

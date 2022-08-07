@@ -17,7 +17,10 @@ export type DayComponentType = (props: {
   isToday: boolean;
 }) => JSX.Element | null;
 
-export type HeaderComponentType = (props: { date: Date }) => JSX.Element | null;
+export type HeaderComponentType = (props: {
+  startDate: Date;
+  endDate: Date;
+}) => JSX.Element | null;
 export type DayLabelComponentType = (props: {
   date: Date;
 }) => JSX.Element | null;
@@ -29,7 +32,7 @@ export type ImperativeApiOptions = {
 export type CalendarImperativeApi = {
   incrementPage: (options?: ImperativeApiOptions) => void;
   decrementPage: (options?: ImperativeApiOptions) => void;
-  setMonth: (date: Date, options?: ImperativeApiOptions) => void;
+  setPage: (date: Date, options?: ImperativeApiOptions) => void;
 };
 
 export type CalendarPageInterpolator = (

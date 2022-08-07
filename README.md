@@ -75,7 +75,7 @@ type ImperativeApiOptions = {
 type CalendarImperativeApi = {
   incrementPage: (options?: ImperativeApiOptions) => void;
   decrementPage: (options?: ImperativeApiOptions) => void;
-  setMonth: (date: Date, options?: ImperativeApiOptions) => void;
+  setPage: (date: Date, options?: ImperativeApiOptions) => void;
 }
 
 // Example
@@ -98,7 +98,7 @@ function MyComponent() {
 | :--------------- | :--------------------- | :-------------------- |
 | `incrementPage` | `(options: ImperativeApiOptions) => void`           | Go to next month.     |
 | `decrementPage` | `(options: ImperativeApiOptions) => void`           | Go to previous month. |
-| `setMonth`       | `(date: Date, options: ImperativeApiOptions) => void` | Go to given month.    |
+| `setPage`       | `(date: Date, options: ImperativeApiOptions) => void` | Go to given month.    |
 
 ### Hooks
 
