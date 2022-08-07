@@ -115,7 +115,4 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
   },
-  flex: {
-    flex: 1,
-  },
 });

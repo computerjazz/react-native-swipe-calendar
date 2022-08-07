@@ -4,35 +4,39 @@ import { StyleSheet, Text, View } from "react-native";
 import { useCalendarContext } from "./context";
 
 export function DayLabels({ daysOfWeek }: { daysOfWeek: Date[] }) {
-  const { DayLabelComponent, theme } = useCalendarContext();
-
   return (
     <View style={styles.row}>
       <View style={styles.dayLabelRow}>
-        {daysOfWeek.map((day) => {
-          const dayLabelText = format(day, theme.dayLabelDateFormat);
-
-          return DayLabelComponent ? (
-            <DayLabelComponent date={day} />
-          ) : (
-            <View
-              key={`day-label-${day.toISOString()}`}
-              style={styles.dayLabelContainer}
-            >
-              <Text
-                style={{
-                  color: theme.dayLabelColor,
-                  fontFamily: theme.dayLabelFontFamily,
-                  fontSize: theme.dayLabelFontSize,
-                  textTransform: theme.dayLabelTextTransform,
-                }}
-              >
-                {dayLabelText}
-              </Text>
-            </View>
-          );
-        })}
+        {daysOfWeek.map((day) => (
+          <DayLabel day={day} />
+        ))}
       </View>
+    </View>
+  );
+}
+
+export function DayLabel({ day }: { day: Date }) {
+  const { DayLabelComponent, theme } = useCalendarContext();
+
+  const dayLabelText = format(day, theme.dayLabelDateFormat);
+
+  return DayLabelComponent ? (
+    <DayLabelComponent date={day} />
+  ) : (
+    <View
+      key={`day-label-${day.toISOString()}`}
+      style={styles.dayLabelContainer}
+    >
+      <Text
+        style={{
+          color: theme.dayLabelColor,
+          fontFamily: theme.dayLabelFontFamily,
+          fontSize: theme.dayLabelFontSize,
+          textTransform: theme.dayLabelTextTransform,
+        }}
+      >
+        {dayLabelText}
+      </Text>
     </View>
   );
 }

@@ -82,4 +82,4 @@ export type CalendarPageInterpolatorParams = PageInterpolatorParams & {
 };
 
 export type WeekDayIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-export type PageInterval = "day" | "week" | "month" | "year";
+export type PageInterval = "day" | "week" | "month";

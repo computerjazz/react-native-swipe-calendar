@@ -2,15 +2,12 @@ import {
   addDays,
   addMonths,
   addWeeks,
-  addYears,
   differenceInCalendarMonths,
   differenceInDays,
   differenceInWeeks,
-  differenceInYears,
   isSameDay,
   isSameMonth,
   isSameWeek,
-  isSameYear,
 } from "date-fns";
 import { PageInterval } from "./types";
 
@@ -22,8 +19,6 @@ export function getDiffFn(interval: PageInterval) {
       return differenceInWeeks;
     case "month":
       return differenceInCalendarMonths;
-    case "year":
-      return differenceInYears;
   }
 }
 
@@ -35,8 +30,6 @@ export function getIsSameFn(interval: PageInterval) {
       return isSameWeek;
     case "month":
       return isSameMonth;
-    case "year":
-      return isSameYear;
   }
 }
 
@@ -48,7 +41,27 @@ export function getAddFn(interval: PageInterval) {
       return addWeeks;
     case "month":
       return addMonths;
-    case "year":
-      return addYears;
+  }
+}
+
+export function getHeaderDateFormat(interval: PageInterval) {
+  switch (interval) {
+    case "day":
+      return "MMMM d, yyyy";
+    case "week":
+      return "MMMM yyyy";
+    case "month":
+      return "MMMM yyyy";
+  }
+}
+
+export function getDayLabelDateFormat(interval: PageInterval) {
+  switch (interval) {
+    case "day":
+      return "EEEE";
+    case "week":
+      return "EEEEEE";
+    case "month":
+      return "EEEEEE";
   }
 }

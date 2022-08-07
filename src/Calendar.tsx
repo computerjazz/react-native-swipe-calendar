@@ -23,13 +23,20 @@ import Animated, {
   useDerivedValue,
   useSharedValue,
 } from "react-native-reanimated";
-import { getAddFn, getDiffFn, getIsSameFn } from "./utils";
+import {
+  getAddFn,
+  getDayLabelDateFormat,
+  getDiffFn,
+  getHeaderDateFormat,
+  getIsSameFn,
+} from "./utils";
 import { WeekPage } from "./Week";
+import { DayPage } from "./Day";
 
 function getPageComponent(interval: PageInterval) {
   switch (interval) {
-    case "year":
     case "day":
+      return DayPage;
     case "week":
       return WeekPage;
     case "month":
@@ -84,12 +91,14 @@ function Calendar(
 
   const fullThemeObj = {
     ...DEFAULT_THEME,
+    dayLabelDateFormat: getDayLabelDateFormat(pageInterval),
+    headerDateFormat: getHeaderDateFormat(pageInterval),
     ...theme,
   };
   const fullThemeRef = useRef(fullThemeObj);
 
   const fullTheme: typeof DEFAULT_THEME = useMemo(() => {
-    const updatedTheme = { ...DEFAULT_THEME, ...theme };
+    const updatedTheme = { ...fullThemeRef.current, ...theme };
     // If the theme object is defined inline, we only want to trigger context updates
     // if the values contained actually change.
     if (isEqual(fullThemeRef.current, updatedTheme)) {

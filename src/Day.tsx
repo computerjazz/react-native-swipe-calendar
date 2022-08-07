@@ -1,8 +1,9 @@
 import React, { useCallback, useMemo, useRef } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { format, isSameDay } from "date-fns";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { addDays, format, isSameDay } from "date-fns";
 import { DayProps, DayWrapperProps, OnDateSelect } from "./types";
 import { useCalendarContext } from "./context";
+import { DayLabel } from "./DayLabels";
 
 // The calendar renders a lot of Days, so we wrap them in order to
 // prevent context updates from re-rendering everything
@@ -129,3 +130,54 @@ export const DayItem = React.memo(
     );
   }
 );
+
+export const DayPage = React.memo(({ index }: { index: number }) => {
+  const { referenceDate, HeaderComponent, theme } = useCalendarContext();
+
+  const dayOffset = useMemo(
+    () => addDays(referenceDate, index),
+    [referenceDate, index]
+  );
+
+  const firstDayOfMonth = useMemo(() => new Date(dayOffset), [dayOffset]);
+  firstDayOfMonth.setDate(1);
+  const dayDateFormatted = format(dayOffset, "yyyy-MM-dd");
+  const headerText = format(dayOffset, theme.headerDateFormat);
+
+  return (
+    <>
+      {HeaderComponent ? (
+        <HeaderComponent startDate={dayOffset} endDate={dayOffset} />
+      ) : (
+        <View style={{ alignItems: "center" }}>
+          <Text
+            style={{
+              fontSize: theme.headerFontSize,
+              fontFamily: theme.headerFontFamily,
+              color: theme.headerFontColor,
+              textTransform: theme.headerTextTransform,
+            }}
+          >
+            {headerText}
+          </Text>
+        </View>
+      )}
+      <View style={styles.row}>
+        <DayLabel day={dayOffset} />
+      </View>
+      <View style={styles.row}>
+        <DayWrapper
+          isInDisplayedMonth
+          dateFormatted={dayDateFormatted}
+          date={dayOffset}
+        />
+      </View>
+    </>
+  );
+});
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+  },
+});
