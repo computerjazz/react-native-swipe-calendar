@@ -28,13 +28,13 @@ type DayComponentType = (props: {
 type CalendarProps = {
   selectedDate?: Date | null;
   onDateSelect?: OnDateSelect;
-  onMonthChange?: (date: Date) => void;
+  onPageChange?: (date: Date) => void;
   currentDate?: Date;
   HeaderComponent?: HeaderComponentType;
   DayLabelComponent?: DayLabelComponentType;
   DayComponent?: DayComponentType;
   theme?: Partial<typeof DEFAULT_THEME>;
-  monthBuffer?: number;
+  pageBuffer?: number;
   minDate?: Date;
   maxDate?: Date;
   pageInterpolator?: typeof defaultPageInterpolator;
@@ -49,7 +49,7 @@ type CalendarProps = {
 | :--------------- | :------------------------------ | :------- |
 | `selectedDate`   | `Date                           | null`                                         | Calendar date to be marked as "selected". |
 | `onDateSelect`   | `(date: Date) => void`          | Callback invoked when the a date is selected. |
-| `onMonthChange`  | `(date: Date) => void`          | Callback invoked when the month is changed.   |
+| `onPageChange`  | `(date: Date) => void`          | Callback invoked when the month is changed.   |
 | `currentDate`    | `Date`                          | Date to initialize the calendar with.         |
 | `theme`          | `Partial<typeof DEFAULT_THEME>` | Overrides for default fonts and colors.       |
 | `HeaderComponent` | `HeaderComponentType`            | Custom replacement for Header component.      |
@@ -73,8 +73,8 @@ type ImperativeApiOptions = {
 }
 
 type CalendarImperativeApi = {
-  incrementMonth: (options?: ImperativeApiOptions) => void;
-  decrementMonth: (options?: ImperativeApiOptions) => void;
+  incrementPage: (options?: ImperativeApiOptions) => void;
+  decrementPage: (options?: ImperativeApiOptions) => void;
   setMonth: (date: Date, options?: ImperativeApiOptions) => void;
 }
 
@@ -82,7 +82,7 @@ type CalendarImperativeApi = {
 function MyComponent() {
 
   const calendarRef = useRef<CalendarImperativeApi>(null)
-  const onIncrementButtonPress = () => calendarRef.current?.incrementMonth()
+  const onIncrementButtonPress = () => calendarRef.current?.incrementPage()
   
   return (
     <>
@@ -96,8 +96,8 @@ function MyComponent() {
 
 | Name             | Type                   | Description           |
 | :--------------- | :--------------------- | :-------------------- |
-| `incrementMonth` | `(options: ImperativeApiOptions) => void`           | Go to next month.     |
-| `decrementMonth` | `(options: ImperativeApiOptions) => void`           | Go to previous month. |
+| `incrementPage` | `(options: ImperativeApiOptions) => void`           | Go to next month.     |
+| `decrementPage` | `(options: ImperativeApiOptions) => void`           | Go to previous month. |
 | `setMonth`       | `(date: Date, options: ImperativeApiOptions) => void` | Go to given month.    |
 
 ### Hooks
@@ -209,7 +209,7 @@ export default function App() {
         currentDate={currentDate}
         onDateSelect={(date, { isSelected }) => setSelectedDate(isSelected ? null : date )}
         selectedDate={selectedDate}
-        onMonthChange={(date) => {
+        onPageChange={(date) => {
           setCurrentDate(date);
           LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         }}
@@ -217,13 +217,13 @@ export default function App() {
       <View style={styles.controlBar}>
         <TouchableOpacity
           style={styles.incDec}
-          onPress={() => calendarRef.current?.decrementMonth()}
+          onPress={() => calendarRef.current?.decrementPage()}
         >
           <Text>{"<"}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.incDec}
-          onPress={() => calendarRef.current?.incrementMonth()}
+          onPress={() => calendarRef.current?.incrementPage()}
         >
           <Text>{">"}</Text>
         </TouchableOpacity>

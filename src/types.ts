@@ -27,8 +27,8 @@ export type ImperativeApiOptions = {
 };
 
 export type CalendarImperativeApi = {
-  incrementMonth: (options?: ImperativeApiOptions) => void;
-  decrementMonth: (options?: ImperativeApiOptions) => void;
+  incrementPage: (options?: ImperativeApiOptions) => void;
+  decrementPage: (options?: ImperativeApiOptions) => void;
   setMonth: (date: Date, options?: ImperativeApiOptions) => void;
 };
 
@@ -39,21 +39,22 @@ export type CalendarPageInterpolator = (
 export type CalendarProps = {
   selectedDate?: Date | null; // TODO: suppoort multiple selected dates (likely using a Set())
   onDateSelect?: OnDateSelect;
-  onMonthChange?: (date: Date) => void;
+  onPageChange?: (date: Date) => void;
   currentDate?: Date;
   HeaderComponent?: HeaderComponentType;
   DayLabelComponent?: DayLabelComponentType;
   DayComponent?: DayComponentType;
   theme?: Partial<typeof DEFAULT_THEME>;
-  monthBuffer?: number;
+  pageBuffer?: number;
   minDate?: Date;
   maxDate?: Date;
   pageInterpolator?: CalendarPageInterpolator;
   simultaneousGestures?: (ComposedGesture | GestureType)[];
-  monthAnimCallbackNode?: Animated.SharedValue<number>;
+  pageAnimCallbackNode?: Animated.SharedValue<number>;
   gesturesDisabled?: boolean;
   animationConfig?: Partial<WithSpringConfig>;
   weekStartsOn?: WeekDayIndex;
+  pageInterval?: PageInterval;
 };
 
 export type DayProps = {
@@ -78,3 +79,4 @@ export type CalendarPageInterpolatorParams = PageInterpolatorParams & {
 };
 
 export type WeekDayIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+export type PageInterval = "day" | "week" | "month" | "year";

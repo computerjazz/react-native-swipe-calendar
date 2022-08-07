@@ -5,7 +5,14 @@ import React, {
   useImperativeHandle,
   useCallback,
 } from "react";
-import { addMonths, isSameMonth, differenceInCalendarMonths } from "date-fns";
+import {
+  addMonths,
+  isSameMonth,
+  differenceInCalendarMonths,
+  differenceInYears,
+  differenceInWeeks,
+  differenceInDays,
+} from "date-fns";
 import { isEqual } from "lodash";
 import InfinitePager, {
   InfinitePagerImperativeApi,
@@ -16,6 +23,7 @@ import {
   CalendarImperativeApi,
   CalendarProps,
   ImperativeApiOptions,
+  PageInterval,
 } from "./types";
 import { CalendarContext } from "./context";
 import { MonthPage } from "./Month";
@@ -24,25 +32,39 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 
+function getDiffFn(interval: PageInterval) {
+  switch (interval) {
+    case "day":
+      return differenceInDays;
+    case "week":
+      return differenceInWeeks;
+    case "year":
+      return differenceInYears;
+    case "month":
+      return differenceInCalendarMonths;
+  }
+}
+
 function Calendar(
   {
     selectedDate,
     onDateSelect,
-    onMonthChange,
+    onPageChange,
     currentDate,
     HeaderComponent,
     DayLabelComponent,
     DayComponent,
     theme = {},
-    monthBuffer = 1,
+    pageBuffer = 1,
     minDate,
     maxDate,
     pageInterpolator = defaultPageInterpolator,
     simultaneousGestures,
-    monthAnimCallbackNode,
+    pageAnimCallbackNode,
     gesturesDisabled,
     animationConfig,
     weekStartsOn = 0, // Sunday is default week start
+    pageInterval = "month",
   }: CalendarProps,
   ref: React.ForwardedRef<CalendarImperativeApi>
 ) {
@@ -55,16 +77,18 @@ function Calendar(
 
   const minPageIndex = useMemo(() => {
     if (!minDate) return -Infinity;
-    return differenceInCalendarMonths(initialDateRef.current, minDate) * -1;
-  }, [minDate]);
+    const differ = getDiffFn(pageInterval);
+    return differ(initialDateRef.current, minDate) * -1;
+  }, [minDate, pageInterval]);
 
   const maxPageIndex = useMemo(() => {
     if (!maxDate) return Infinity;
-    return differenceInCalendarMonths(initialDateRef.current, maxDate) * -1;
-  }, [maxDate]);
+    const differ = getDiffFn(pageInterval);
+    return differ(initialDateRef.current, maxDate) * -1;
+  }, [maxDate, pageInterval]);
 
-  const onMonthChangeRef = useRef(onMonthChange);
-  onMonthChangeRef.current = onMonthChange;
+  const onPageChangeRef = useRef(onPageChange);
+  onPageChangeRef.current = onPageChange;
 
   const fullThemeObj = {
     ...DEFAULT_THEME,
@@ -87,21 +111,22 @@ function Calendar(
   useImperativeHandle(
     ref,
     () => ({
-      incrementMonth: (options?: ImperativeApiOptions) => {
+      incrementPage: (options?: ImperativeApiOptions) => {
         const animated = options?.animated ?? true;
         pagerRef.current?.incrementPage({ animated });
       },
-      decrementMonth: (options?: ImperativeApiOptions) => {
+      decrementPage: (options?: ImperativeApiOptions) => {
         const animated = options?.animated ?? true;
         pagerRef.current?.decrementPage({ animated });
       },
       setMonth: (date: Date, options?: ImperativeApiOptions) => {
         const animated = options?.animated ?? false;
-        const page = differenceInCalendarMonths(date, initialDateRef.current);
+        const differ = getDiffFn(pageInterval);
+        const page = differ(date, initialDateRef.current);
         pagerRef.current?.setPage(page, { animated });
       },
     }),
-    []
+    [pageInterval]
   );
 
   useEffect(() => {
@@ -122,11 +147,11 @@ function Calendar(
     currentDateRef.current = currentDate;
   }, [currentDate]);
 
-  const onPageChange = useCallback((pg: number) => {
+  const _onPageChange = useCallback((pg: number) => {
     currentPageRef.current = pg;
     const currentMonth = addMonths(initialDateRef.current, pg);
     currentMonth.setDate(1);
-    onMonthChangeRef.current?.(currentMonth);
+    onPageChangeRef.current?.(currentMonth);
   }, []);
 
   const providerValue = useMemo(
@@ -166,20 +191,20 @@ function Calendar(
       <InfinitePager
         ref={pagerRef}
         PageComponent={MonthPage}
-        pageBuffer={monthBuffer}
-        onPageChange={onPageChange}
+        pageBuffer={pageBuffer}
+        onPageChange={_onPageChange}
         minIndex={minPageIndex}
         maxIndex={maxPageIndex}
         pageInterpolator={pageInterpolatorInternal}
         simultaneousGestures={simultaneousGestures}
-        pageCallbackNode={monthAnimCallbackNode ? pageCallbackNode : undefined}
+        pageCallbackNode={pageAnimCallbackNode ? pageCallbackNode : undefined}
         gesturesDisabled={gesturesDisabled}
         animationConfig={animationConfig}
       />
-      {monthAnimCallbackNode && (
+      {pageAnimCallbackNode && (
         <AnimUpdater
-          initialMonthIndex={initialDateRef.current.getMonth()}
-          monthAnimCallbackNode={monthAnimCallbackNode}
+          initialPageIndex={initialDateRef.current.getMonth()}
+          pageAnimCallbackNode={pageAnimCallbackNode}
           pageCallbackNode={pageCallbackNode}
         />
       )}
@@ -189,22 +214,22 @@ function Calendar(
 
 // Separate updater component so we only take the (slight) performance hit if the user provides a callback node
 function AnimUpdater({
-  initialMonthIndex,
+  initialPageIndex,
   pageCallbackNode,
-  monthAnimCallbackNode,
+  pageAnimCallbackNode,
 }: {
-  initialMonthIndex: number;
+  initialPageIndex: number;
   pageCallbackNode: Animated.SharedValue<number>;
-  monthAnimCallbackNode: Animated.SharedValue<number>;
+  pageAnimCallbackNode: Animated.SharedValue<number>;
 }) {
   useDerivedValue(() => {
-    const rawVal = pageCallbackNode.value + initialMonthIndex;
+    const rawVal = pageCallbackNode.value + initialPageIndex;
     let modVal = rawVal % 12;
     if (modVal < 0) {
       modVal = 12 + modVal;
     }
-    monthAnimCallbackNode.value = modVal;
-  }, [pageCallbackNode, initialMonthIndex]);
+    pageAnimCallbackNode.value = modVal;
+  }, [pageCallbackNode, initialPageIndex]);
 
   return null;
 }
