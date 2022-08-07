@@ -4,13 +4,12 @@ import {
   eachDayOfInterval,
   eachWeekOfInterval,
   format,
-  isSameMonth,
   lastDayOfMonth,
 } from "date-fns";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useCalendarContext } from "./context";
-import { DayWrapper } from "./Day";
+import Week from "./Week";
 
 export const MonthPage = React.memo(({ index }: { index: number }) => {
   const {
@@ -99,26 +98,8 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
       </View>
       <View style={styles.row}>
         <View style={styles.flex}>
-          {weeks.map((daysInWeek) => {
-            return (
-              <View
-                key={`week-${daysInWeek[0]?.toISOString()}`}
-                style={styles.weekContainer}
-              >
-                {daysInWeek.map((day) => {
-                  const sameMonth = isSameMonth(day, firstDayOfMonth);
-                  const dayDateFormatted = format(day, "yyyy-MM-dd");
-                  return (
-                    <DayWrapper
-                      key={dayDateFormatted}
-                      isInDisplayedMonth={sameMonth}
-                      date={day}
-                      dateFormatted={dayDateFormatted}
-                    />
-                  );
-                })}
-              </View>
-            );
+          {weeks.map((week) => {
+            return <Week week={week} firstDayOfMonth={firstDayOfMonth} />;
           })}
         </View>
       </View>
@@ -133,10 +114,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  weekContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
   },
   dayLabelRow: {
     flex: 1,
