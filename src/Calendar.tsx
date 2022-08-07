@@ -208,7 +208,8 @@ function Calendar(
       />
       {pageAnimCallbackNode && (
         <AnimUpdater
-          initialPageIndex={initialDateRef.current.getMonth()}
+          pageInterval={pageInterval}
+          initialDateRef={initialDateRef}
           pageAnimCallbackNode={pageAnimCallbackNode}
           pageCallbackNode={pageCallbackNode}
         />
@@ -219,22 +220,39 @@ function Calendar(
 
 // Separate updater component so we only take the (slight) performance hit if the user provides a callback node
 function AnimUpdater({
-  initialPageIndex,
+  initialDateRef,
   pageCallbackNode,
   pageAnimCallbackNode,
+  pageInterval,
 }: {
-  initialPageIndex: number;
+  initialDateRef: React.MutableRefObject<Date>;
   pageCallbackNode: Animated.SharedValue<number>;
   pageAnimCallbackNode: Animated.SharedValue<number>;
+  pageInterval: PageInterval;
 }) {
+  const initialPageIndex = initialDateRef.current.getMonth();
+
   useDerivedValue(() => {
-    const rawVal = pageCallbackNode.value + initialPageIndex;
+    function getMultiplier() {
+      // FIXME: not totally correct for day/week view
+      switch (pageInterval) {
+        case "week":
+          return 1 / (365 / 12 / 7);
+        case "day":
+          return 1 / (365 / 12);
+        case "month":
+          return 1;
+      }
+    }
+
+    const multiplier = getMultiplier();
+    const rawVal = pageCallbackNode.value * multiplier + initialPageIndex;
     let modVal = rawVal % 12;
     if (modVal < 0) {
       modVal = 12 + modVal;
     }
     pageAnimCallbackNode.value = modVal;
-  }, [pageCallbackNode, initialPageIndex]);
+  }, [pageCallbackNode, initialPageIndex, pageInterval]);
 
   return null;
 }
