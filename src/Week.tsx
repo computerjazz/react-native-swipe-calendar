@@ -51,7 +51,10 @@ export const WeekPage = React.memo(({ index }: { index: number }) => {
     [referenceDate, index]
   );
 
-  const firstDayOfMonth = useMemo(() => new Date(weekOffset), [weekOffset]);
+  const firstDayOfMonth = useMemo(
+    () => new Date(addDays(weekOffset, 3)),
+    [weekOffset]
+  );
 
   firstDayOfMonth.setDate(1);
 

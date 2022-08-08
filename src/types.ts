@@ -53,7 +53,7 @@ export type CalendarProps = {
   maxDate?: Date;
   pageInterpolator?: CalendarPageInterpolator;
   simultaneousGestures?: (ComposedGesture | GestureType)[];
-  pageAnimCallbackNode?: Animated.SharedValue<number>;
+  monthAnimCallbackNode?: Animated.SharedValue<number>;
   gesturesDisabled?: boolean;
   animationConfig?: Partial<WithSpringConfig>;
   weekStartsOn?: WeekDayIndex;
