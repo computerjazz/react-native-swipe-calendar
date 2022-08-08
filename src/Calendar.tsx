@@ -32,6 +32,7 @@ import {
 } from "./utils";
 import { WeekPage } from "./Week";
 import { DayPage } from "./Day";
+import { getDaysInMonth } from "date-fns";
 
 function getPageComponent(interval: PageInterval) {
   switch (interval) {
@@ -59,7 +60,7 @@ function Calendar(
     maxDate,
     pageInterpolator = defaultPageInterpolator,
     simultaneousGestures,
-    pageAnimCallbackNode,
+    monthAnimCallbackNode,
     gesturesDisabled,
     animationConfig,
     weekStartsOn = 0, // Sunday is default week start
@@ -202,15 +203,15 @@ function Calendar(
         maxIndex={maxPageIndex}
         pageInterpolator={pageInterpolatorInternal}
         simultaneousGestures={simultaneousGestures}
-        pageCallbackNode={pageAnimCallbackNode ? pageCallbackNode : undefined}
+        pageCallbackNode={monthAnimCallbackNode ? pageCallbackNode : undefined}
         gesturesDisabled={gesturesDisabled}
         animationConfig={animationConfig}
       />
-      {pageAnimCallbackNode && (
+      {monthAnimCallbackNode && (
         <AnimUpdater
           pageInterval={pageInterval}
           initialDateRef={initialDateRef}
-          pageAnimCallbackNode={pageAnimCallbackNode}
+          monthAnimCallbackNode={monthAnimCallbackNode}
           pageCallbackNode={pageCallbackNode}
         />
       )}
@@ -222,39 +223,86 @@ function Calendar(
 function AnimUpdater({
   initialDateRef,
   pageCallbackNode,
-  pageAnimCallbackNode,
+  monthAnimCallbackNode,
   pageInterval,
 }: {
   initialDateRef: React.MutableRefObject<Date>;
   pageCallbackNode: Animated.SharedValue<number>;
-  pageAnimCallbackNode: Animated.SharedValue<number>;
+  monthAnimCallbackNode: Animated.SharedValue<number>;
   pageInterval: PageInterval;
 }) {
-  const initialPageIndex = initialDateRef.current.getMonth();
+  const initialMonthIndex = initialDateRef.current.getMonth();
+  const initialDayOfMonth = initialDateRef.current.getDate();
 
   useDerivedValue(() => {
-    function getMultiplier() {
-      // FIXME: not totally correct for day/week view
+    function getMonthFromPage(page: number, initialOffset: number) {
       switch (pageInterval) {
-        case "week":
-          return 1 / (365 / 12 / 7);
-        case "day":
-          return 1 / (365 / 12);
+        case "week": {
+          const midweek = page * 7 + 3.5 + initialOffset;
+          return getMonthFromDay(midweek);
+        }
+        case "day": {
+          return getMonthFromDay(page + initialOffset);
+        }
         case "month":
-          return 1;
+          // In 'month' view the pages already map to months
+          return page;
       }
     }
 
-    const multiplier = getMultiplier();
-    const rawVal = pageCallbackNode.value * multiplier + initialPageIndex;
+    const initialOffset =
+      daysElapsedAtMonthStart[initialMonthIndex] + initialDayOfMonth;
+    const monthAnim = getMonthFromPage(pageCallbackNode.value, initialOffset);
+    const rawVal = monthAnim;
     let modVal = rawVal % 12;
     if (modVal < 0) {
       modVal = 12 + modVal;
     }
-    pageAnimCallbackNode.value = modVal;
-  }, [pageCallbackNode, initialPageIndex, pageInterval]);
+    monthAnimCallbackNode.value = modVal;
+  }, [
+    pageCallbackNode,
+    monthAnimCallbackNode,
+    initialMonthIndex,
+    initialDayOfMonth,
+    pageInterval,
+  ]);
 
   return null;
 }
 
 export default React.memo(React.forwardRef(Calendar));
+
+const numDaysInMonth = [...Array(12)].fill(0).flatMap((d, i) => {
+  const month = new Date();
+  month.setMonth(i);
+  const numDaysInMonth = getDaysInMonth(month);
+  return numDaysInMonth;
+});
+
+const daysElapsedAtMonthStart = numDaysInMonth.reduce(
+  (acc, cur) => {
+    const last = acc[acc.length - 1] || 0;
+    acc.push(last + cur);
+    return acc;
+  },
+  [0]
+);
+
+const dayOfYearToMonthIndex = numDaysInMonth.flatMap(
+  (numDaysInMonth, monthIndex) => {
+    return [...new Array(numDaysInMonth)].fill(0).map((_, i) => {
+      return {
+        pct: monthIndex + i / numDaysInMonth,
+        numDaysInMonth,
+      };
+    });
+  }
+);
+
+function getMonthFromDay(dayOfYear: number) {
+  "worklet";
+  const floor = Math.floor(dayOfYear);
+  const remainder = dayOfYear % 1;
+  const { pct, numDaysInMonth } = dayOfYearToMonthIndex[floor % 365];
+  return pct + remainder / numDaysInMonth;
+}
