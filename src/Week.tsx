@@ -24,10 +24,7 @@ function Week({
   return WeekComponent ? (
     <WeekComponent weekDates={daysOfWeek} />
   ) : (
-    <View
-      key={`week-${daysOfWeek[0]?.toISOString()}`}
-      style={styles.weekContainer}
-    >
+    <View style={styles.weekContainer}>
       {daysOfWeek.map((day) => {
         const sameMonth = isSameMonth(day, firstDayOfMonth);
         const dayDateFormatted = format(day, "yyyy-MM-dd");

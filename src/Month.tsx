@@ -69,7 +69,13 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
       <View style={styles.row}>
         <View style={styles.flex}>
           {weeks.map((week) => {
-            return <Week daysOfWeek={week} firstDayOfMonth={firstDayOfMonth} />;
+            return (
+              <Week
+                key={`week-${week[0]?.toISOString()}`}
+                daysOfWeek={week}
+                firstDayOfMonth={firstDayOfMonth}
+              />
+            );
           })}
         </View>
       </View>

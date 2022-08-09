@@ -8,7 +8,7 @@ export function DayLabels({ daysOfWeek }: { daysOfWeek: Date[] }) {
     <View style={styles.row}>
       <View style={styles.dayLabelRow}>
         {daysOfWeek.map((day) => (
-          <DayLabel day={day} />
+          <DayLabel key={`day-label-${day.toISOString()}`} day={day} />
         ))}
       </View>
     </View>
@@ -23,10 +23,7 @@ export function DayLabel({ day }: { day: Date }) {
   return DayLabelComponent ? (
     <DayLabelComponent date={day} />
   ) : (
-    <View
-      key={`day-label-${day.toISOString()}`}
-      style={styles.dayLabelContainer}
-    >
+    <View style={styles.dayLabelContainer}>
       <Text
         style={{
           color: theme.dayLabelColor,
