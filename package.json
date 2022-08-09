@@ -1,6 +1,6 @@
 {
   "name": "react-native-swipe-calendar",
-  "version": "0.0.19",
+  "version": "0.0.20-beta.0",
   "description": "An infinitely-paged calendar component that dynamically renders months. Powered by Reanimated 2.",
   "author": "Daniel Merrill",
   "license": "MIT",
