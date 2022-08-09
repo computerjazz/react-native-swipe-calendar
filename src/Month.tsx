@@ -13,8 +13,13 @@ import { DayLabels } from "./DayLabels";
 import Week from "./Week";
 
 export const MonthPage = React.memo(({ index }: { index: number }) => {
-  const { referenceDate, HeaderComponent, theme, weekStartsOn } =
-    useCalendarContext();
+  const {
+    referenceDate,
+    HeaderComponent,
+    MonthComponent,
+    theme,
+    weekStartsOn,
+  } = useCalendarContext();
   const firstDayOfMonth = useMemo(
     () => addMonths(referenceDate, index),
     [referenceDate, index]
@@ -66,19 +71,23 @@ export const MonthPage = React.memo(({ index }: { index: number }) => {
         </View>
       )}
       <DayLabels daysOfWeek={weeks[0]} />
-      <View style={styles.row}>
-        <View style={styles.flex}>
-          {weeks.map((week) => {
-            return (
-              <Week
-                key={`week-${week[0]?.toISOString()}`}
-                daysOfWeek={week}
-                firstDayOfMonth={firstDayOfMonth}
-              />
-            );
-          })}
+      {MonthComponent ? (
+        <MonthComponent weeks={weeks} firstDayOfMonth={firstDayOfMonth} />
+      ) : (
+        <View style={styles.row}>
+          <View style={styles.flex}>
+            {weeks.map((week) => {
+              return (
+                <Week 
+                  key={`week-${week[0]?.toISOString()}`}
+                  days={week} 
+                  firstDayOfMonth={firstDayOfMonth} 
+                 />
+              );
+            })}
+          </View>
         </View>
-      </View>
+      )}
     </View>
   );
 });

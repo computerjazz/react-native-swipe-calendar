@@ -25,22 +25,38 @@ type DayComponentType = (props: {
   isToday: boolean;
 }) => JSX.Element | null;
 
-type CalendarProps = {
-  selectedDate?: Date | null;
+export type WeekComponentType = (props: {
+  days: Date[];
+}) => JSX.Element | null;
+
+export type MonthComponentType = (props: {
+  weeks: Date[][];
+  firstDayOfMonth: Date;
+}) => JSX.Element | null;
+
+export type PageInterval = "day" | "week" | "month";
+
+export type CalendarProps = {
+  selectedDate?: Date | null; 
   onDateSelect?: OnDateSelect;
   onPageChange?: (date: Date) => void;
   currentDate?: Date;
   HeaderComponent?: HeaderComponentType;
   DayLabelComponent?: DayLabelComponentType;
   DayComponent?: DayComponentType;
+  WeekComponent?: WeekComponentType;
+  MonthComponent?: MonthComponentType;
   theme?: Partial<typeof DEFAULT_THEME>;
   pageBuffer?: number;
   minDate?: Date;
   maxDate?: Date;
-  pageInterpolator?: typeof defaultPageInterpolator;
-  simultaneousHandlers?: React.Ref<unknown> | React.Ref<unknown>[];
+  pageInterpolator?: CalendarPageInterpolator;
+  simultaneousGestures?: (ComposedGesture | GestureType)[];
+  monthAnimCallbackNode?: Animated.SharedValue<number>;
+  gesturesDisabled?: boolean;
   animationConfig?: Partial<WithSpringConfig>;
-  weekStartsOn?: number;
+  weekStartsOn?: WeekDayIndex;
+  pageInterval?: PageInterval;
 };
 
 ```
@@ -54,6 +70,8 @@ type CalendarProps = {
 | `theme`          | `Partial<typeof DEFAULT_THEME>` | Overrides for default fonts and colors.       |
 | `HeaderComponent` | `HeaderComponentType`            | Custom replacement for Header component.      |
 | `DayComponent`   | `DayComponentType`              | Custom replacement for Day compoent.         |
+| `WeekComponent`   | `WeekComponentType`              | Custom replacement for Week compoent.         |
+| `MonthComponent`   | `MonthComponentType`              | Custom replacement for Month compoent.         |
 | `DayLabelComponent` | `DayLabelComponentType`            | Custom replacement for Day Label component ("Su", "Mo", etc).      |
 |`minDate`|`Date`|The minimum date the calendar will display|
 |`maxDate`|`Date`|The maximum date the calendar will display|
@@ -61,6 +79,7 @@ type CalendarProps = {
 |`animationConfig`|`Partial<WithSpringConfig>`| An animation spring config object to customize how page transitions animate.|
 |`simultaneousGestures`|`(ComposedGesture | GestureType)[]`| Any RNGH gestures that wrap the calendar.|
 |`weekStartsOn`|`number`| Index of the day week starts on.|
+|`pageInterval`|`"month" | "week" | "day"`| Time span of each page.|
 
 ### Imperative Api
 
@@ -112,6 +131,8 @@ type CalendarContextValue = {
   selectedDate: Date | null | undefined,
   onDateSelect: OnDateSelect,
   DayComponent:  DayComponentType | undefined,
+  WeekComponent:  WeekComponentType | undefined,
+  MonthComponent:  MonthComponentType | undefined,
   DayLabelComponent: DayLabelComponentType | undefined,
   HeaderComponent: HeaderComponentType | undefined,
   theme: typeof DEFAULT_THEME,
