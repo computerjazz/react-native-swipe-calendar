@@ -13,22 +13,19 @@ import { DayWrapper } from "./Day";
 import { DayLabels } from "./DayLabels";
 
 function Week({
-  daysOfWeek,
+  days,
   firstDayOfMonth,
 }: {
-  daysOfWeek: Date[];
+  days: Date[];
   firstDayOfMonth: Date;
 }) {
   const { WeekComponent } = useCalendarContext();
 
   return WeekComponent ? (
-    <WeekComponent weekDates={daysOfWeek} />
+    <WeekComponent days={days} />
   ) : (
-    <View
-      key={`week-${daysOfWeek[0]?.toISOString()}`}
-      style={styles.weekContainer}
-    >
-      {daysOfWeek.map((day) => {
+    <View key={`week-${days[0]?.toISOString()}`} style={styles.weekContainer}>
+      {days.map((day) => {
         const sameMonth = isSameMonth(day, firstDayOfMonth);
         const dayDateFormatted = format(day, "yyyy-MM-dd");
         return (
@@ -109,7 +106,7 @@ export const WeekPage = React.memo(({ index }: { index: number }) => {
         </View>
       )}
       <DayLabels daysOfWeek={daysOfWeek} />
-      <Week daysOfWeek={daysOfWeek} firstDayOfMonth={firstDayOfMonth} />
+      <Week days={daysOfWeek} firstDayOfMonth={firstDayOfMonth} />
     </>
   );
 });
