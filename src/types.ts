@@ -17,10 +17,15 @@ export type DayComponentType = (props: {
   isToday: boolean;
 }) => JSX.Element | null;
 
+export type WeekComponentType = (props: {
+  weekDates: Date[];
+}) => JSX.Element | null;
+
 export type HeaderComponentType = (props: {
   startDate: Date;
   endDate: Date;
 }) => JSX.Element | null;
+
 export type DayLabelComponentType = (props: {
   date: Date;
 }) => JSX.Element | null;
@@ -47,6 +52,7 @@ export type CalendarProps = {
   HeaderComponent?: HeaderComponentType;
   DayLabelComponent?: DayLabelComponentType;
   DayComponent?: DayComponentType;
+  WeekComponent?: WeekComponentType;
   theme?: Partial<typeof DEFAULT_THEME>;
   pageBuffer?: number;
   minDate?: Date;

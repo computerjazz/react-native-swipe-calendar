@@ -19,7 +19,11 @@ function Week({
   daysOfWeek: Date[];
   firstDayOfMonth: Date;
 }) {
-  return (
+  const { WeekComponent } = useCalendarContext();
+
+  return WeekComponent ? (
+    <WeekComponent weekDates={daysOfWeek} />
+  ) : (
     <View
       key={`week-${daysOfWeek[0]?.toISOString()}`}
       style={styles.weekContainer}

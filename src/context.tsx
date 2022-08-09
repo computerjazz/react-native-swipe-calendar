@@ -6,6 +6,7 @@ import {
   DayLabelComponentType,
   HeaderComponentType,
   OnDateSelect,
+  WeekComponentType,
 } from "./types";
 
 export const CalendarContext = React.createContext({
@@ -14,6 +15,7 @@ export const CalendarContext = React.createContext({
   onDateSelect: (() => {}) as OnDateSelect,
   DayComponent: undefined as DayComponentType | undefined,
   DayLabelComponent: undefined as DayLabelComponentType | undefined,
+  WeekComponent: undefined as WeekComponentType | undefined,
   HeaderComponent: undefined as HeaderComponentType | undefined,
   theme: DEFAULT_THEME,
   pageInterpolator: defaultPageInterpolator,
