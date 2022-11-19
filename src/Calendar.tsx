@@ -27,6 +27,7 @@ import {
   getAddFn,
   getDayLabelDateFormat,
   getDiffFn,
+  getFirstDayOfInteval,
   getHeaderDateFormat,
   getIsSameFn,
 } from "./utils";
@@ -155,11 +156,13 @@ function Calendar(
     (pg: number) => {
       currentPageRef.current = pg;
       const addFn = getAddFn(pageInterval);
+      const firstDayOfInterfalFn = getFirstDayOfInteval(pageInterval, {
+        weekStartsOn,
+      });
       const dateWithOffset = addFn(initialDateRef.current, pg);
-      dateWithOffset.setDate(1);
-      onPageChangeRef.current?.(dateWithOffset);
+      onPageChangeRef.current?.(firstDayOfInterfalFn(dateWithOffset));
     },
-    [pageInterval]
+    [pageInterval, weekStartsOn]
   );
 
   const providerValue = useMemo(

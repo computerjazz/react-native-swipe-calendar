@@ -8,8 +8,11 @@ import {
   isSameDay,
   isSameMonth,
   isSameWeek,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
 } from "date-fns";
-import { PageInterval } from "./types";
+import { PageInterval, WeekDayIndex } from "./types";
 
 export function getDiffFn(interval: PageInterval) {
   switch (interval) {
@@ -41,6 +44,20 @@ export function getAddFn(interval: PageInterval) {
       return addWeeks;
     case "month":
       return addMonths;
+  }
+}
+
+export function getFirstDayOfInteval(
+  interval: PageInterval,
+  options: { weekStartsOn: WeekDayIndex } = { weekStartsOn: 0 }
+) {
+  switch (interval) {
+    case "day":
+      return (date: Date) => startOfDay(date);
+    case "week":
+      return (date: Date) => startOfWeek(date, options);
+    case "month":
+      return (date: Date) => startOfMonth(date);
   }
 }
 
